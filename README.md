@@ -2,7 +2,7 @@
 Tally is a exactly as it sounds: it is a tally counter.
 
 ## Using Tally ##
-You can go to [here](g16-app-tally) to use Tally.
+You can go to [here][g16-app-tally] to use Tally.
 
 ### Features ###
 * Items will never be listed more than once. Typing the same item more than once will
@@ -23,7 +23,7 @@ You can either:
 Tally is open for contribution. *So don't be impatient.*
 
 ## About Tally ##
-[Ghifari160](g16-about-githubProfile) needed to tally a list of items on his day off
+[Ghifari160][g16-about-githubProfile] needed to tally a list of items on his day off
 from school. Instead of spending five minutes tallying, he decided to write an app
 to tally because he was too lazy to stand up and grab a piece of paper. Originally
 planned to take about two hours, he ended up spending 24+ hours with this project as
