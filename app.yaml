@@ -14,3 +14,7 @@ handlers:
 
 - url: /.*
   script: app.php
+
+skip_files:
+  - .htaccess
+  - .git/.*
