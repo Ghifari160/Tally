@@ -1,0 +1,12 @@
+RewriteEngine on
+
+RewriteCond %{REQUEST_URI} (.*)\.(js|css|png)$
+RewriteRule ^(.*)\.(js|css|png)$ $1.$2 [END]
+
+RewriteCond %{REQUEST_URI} api/(.*)$
+RewriteRule ^api/(.*)$ api.php [END]
+
+RewriteCond %{REQUEST_URI} export/(.*)$
+RewriteRule ^export/(.*)$ export.php [END]
+
+RewriteRule ^(.*)$ app.php

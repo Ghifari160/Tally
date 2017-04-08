@@ -1,0 +1,271 @@
+@charset "utf-8";
+
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i|Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i');
+
+body,html
+{
+	margin: 0;
+	padding: 0;
+}
+
+#modal
+{
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	display: none;
+	background: #fff;
+	opacity: .5;
+	z-index: 20;
+}
+
+#modal-dialog
+{
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	display: none;
+	min-width: 50%;
+	min-height: 40%;
+	background: #fff;
+	border-radius: 3px;
+	border: 1px solid #ccc;
+	transform: translate(-50%, -50%);
+	z-index: 30;
+}
+
+#modal-dialog .title
+{
+	display: table;
+	font-family: 'Open sans', sans-serif;
+	font-size: 40px;
+	margin: 0 auto 15px auto;
+}
+
+#modal-dialog .body
+{
+	width: 100%;
+	text-align: center;
+}
+
+#modal-dialog .body .btn
+{
+	display: inline-block;
+	width: 45%;
+	height: 30px;
+	margin-right: 4%;
+	margin-bottom: 15px;
+	padding: 5px 0;
+	font-family: 'Open sans', sans-serif;
+	font-size: 30px;
+	font-weight: 300;
+	line-height: 30px;
+	text-align: center;
+	background: #dedede;
+	border-radius: 3px;
+	border: 1px solid #ccc;
+	vertical-align: middle;
+	cursor: pointer;
+}
+
+#modal-dialog .body .btn:nth-child(2n)
+{
+	margin-right: 0;
+}
+
+#modal-dialog .body .btn:hover
+{
+	background: #ebebeb;
+}
+
+#modal-dialog .body .btn:active
+{
+	background: #fbfbfb;
+}
+
+.g16-header .g16-logo-container .g16-text
+{
+	font-family: 'Open sans', sans-serif;
+	font-weight: 700;
+}
+
+.tally-input
+{
+	width: 100%;
+	text-align: center;
+	margin: 145px 0 20px 0;
+}
+
+.tally-input .item-input
+{
+	width: 94%;
+	height: 50px;
+	font-family: 'Open sans', sans-serif;
+	font-weight: 300;
+	font-size: 50px;
+	padding: 10px .5%;
+	text-align: center;
+}
+
+.tally-list
+{
+	margin: 0 1%;
+	padding: 20px 1.5%;
+	border-top: 1px solid #ccc;
+}
+
+.tally-list .ui
+{
+	font-family: 'Open sans', sans-serif;
+	font-weight: 300;
+	font-size: 50px;
+	margin: 0 auto;
+}
+
+.tally-list .ui div,
+.tally-list .ui div.shown
+{
+	display: table;
+	margin: 0 auto;
+}
+
+.tally-list .ui div.hidden
+{
+	display: none;
+}
+
+.tally-list .ui div a,
+.tally-list .ui div a:visited
+{
+	color: #167ac6;
+	text-decoration: none;
+}
+
+.tally-list .ui div a:hover
+{
+	text-decoration: underline;
+}
+
+.tally-list .list
+{
+	display: table;
+	margin: 0 auto;
+	border-spacing: 20px 10px;
+}
+
+.tally-list .item
+{
+	display: table-row;
+	width: 100%;
+}
+
+.tally-list .item .identifier
+{
+	display: table-cell;
+	height: 50px;
+	margin-right: auto;
+	font-family: 'Open sans', sans-serif;
+	font-size: 50px;
+	line-height: 50px;
+	vertical-align: middle;
+}
+
+.tally-list .item .count
+{
+	display: table-cell;
+	height: 50px;
+	font-family: 'Open sans', sans-serif;
+	font-size: 50px;
+	line-height: 50px;
+	vertical-align: middle;
+}
+
+@media only screen and (max-width: 500px)
+{
+	#modal-dialog .title
+	{
+		font-size: 20px;
+	}
+
+	#modal-dialog .body .btn
+	{
+		height: 10px;
+		font-size: 10px;
+		line-height: 10px;
+	}
+
+	.tally-list .ui
+	{
+		font-size: 30px;
+	}
+
+	.tally-input
+	{
+		margin: 105px 0 20px 0;
+	}
+
+	.tally-input .item-input
+	{
+		height: 30px;
+		font-size: 30px;
+	}
+
+	.tally-list .item .identifier
+	{
+		height: 30px;
+		font-size: 30px;
+		line-height: 30px;
+	}
+
+	.tally-list .item .count
+	{
+		height: 30px;
+		font-size: 30px;
+		line-height: 30px;
+	}
+}
+
+@media only screen and (max-width: 300px)
+{
+	#modal-dialog .title
+	{
+		font-size: 15px;
+	}
+
+	#modal-dialog .body .btn
+	{
+		height: 5px;
+		font-size: 5px;
+		line-height: 5px;
+	}
+
+	.tally-list .ui
+	{
+		font-size: 25px;
+	}
+
+	.tally-input
+	{
+		margin: 95px 0 20px 0;
+	}
+
+	.tally-input .item-input
+	{
+		height: 25px;
+		font-size: 25px;
+	}
+
+	.tally-list .item .identifier
+	{
+		height: 25px;
+		font-size: 25px;
+		line-height: 25px;
+	}
+
+	.tally-list .item .count
+	{
+		height: 25px;
+		font-size: 25px;
+		line-height: 25px;
+	}
+}

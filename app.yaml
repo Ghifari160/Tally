@@ -1,0 +1,16 @@
+runtime: php55
+api_version: 1
+
+handlers:
+- url: /(.*\.(js|css|png))$
+  static_files: \1
+  upload: .*\.(js|css|png)$
+
+- url: /api/.*
+  script: api.php
+
+- url: /export/.*
+  script: export.php
+
+- url: /.*
+  script: app.php
