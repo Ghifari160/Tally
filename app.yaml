@@ -18,3 +18,4 @@ handlers:
 skip_files:
   - .htaccess
   - .git/.*
+  - ^(.*)\.ignore\.(php|js|css|png|ini|md)$

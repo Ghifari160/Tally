@@ -21,6 +21,8 @@
 		<div class="btn csv">CSV</div>
 		<div class="btn tsv">TSV</div>
 		<div class="btn sql">SQL</div>
+		<!-- <div class="btn xlsx">Excel Spreadsheet</div>
+		<div class="btn pdf">PDF</div> -->
 		<div id="g-btn" class="btn gdoc">Save to Google Drive</div>
 	</div>
 </div>
