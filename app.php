@@ -10,8 +10,8 @@ $path = substr(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), 1);
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <?php getAppIcons(); ?>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js" defer></script>
-<script src="/base64.js" defer></script>
-<script src="/app.js" defer></script>
+<script src="/static/base64.js" defer></script>
+<script src="/static/app.js" defer></script>
 <script src="https://apis.google.com/js/platform.js" async defer></script>
 <style>
 #loading
@@ -31,8 +31,8 @@ $path = substr(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), 1);
 <body>
 <div id="loading"></div>
 <noscript id="deferred-styles">
-	<link rel="stylesheet" href="/g16.css">
-	<link rel="stylesheet" href="/app.css">
+	<link rel="stylesheet" href="/static/g16.css">
+	<link rel="stylesheet" href="/static/app.css">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i|Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i">
 </noscript>
 <div id="modal"></div>

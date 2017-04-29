@@ -27,13 +27,13 @@ function getAppIcons()
 	echo "<meta name=\"apple-mobile-web-app-title\" content=\"Tally"
 			.((APP_DEV) ? ".Dev" : "")."\">\n"
 		// ."<meta name=\"apple-mobile-web-app-capable\" content=\"yes\">\n"
-		."<link rel=\"apple-touch-icon\" href=\"/logo-120.png\">\n"
-		."<link rel=\"apple-touch-icon\" sizes=\"152x152\" href=\"/logo-152.png\">\n"
-		."<link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/logo-180.png\">\n"
-		."<link rel=\"apple-touch-icon\" sizes=\"76x76\" href=\"/logo-76.png\">\n"
-		."<link rel=\"icon\" sizes=\"192x192\" href=\"/logo-192.png\">\n"
-		."<link rel=\"icon\" sizes=\"128x128\" href=\"/logo-128.png\">\n"
-		."<link rel=\"icon\" sizes=\"32x32\" href=\"/logo-32.png\">\n";
+		."<link rel=\"apple-touch-icon\" href=\"/static/logo-120.png\">\n"
+		."<link rel=\"apple-touch-icon\" sizes=\"152x152\" href=\"/static/logo-152.png\">\n"
+		."<link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/static/logo-180.png\">\n"
+		."<link rel=\"apple-touch-icon\" sizes=\"76x76\" href=\"/static/logo-76.png\">\n"
+		."<link rel=\"icon\" sizes=\"192x192\" href=\"/static/logo-192.png\">\n"
+		."<link rel=\"icon\" sizes=\"128x128\" href=\"/static/logo-128.png\">\n"
+		."<link rel=\"icon\" sizes=\"32x32\" href=\"/static/logo-32.png\">\n";
 }
 
 function createGSPath($path)

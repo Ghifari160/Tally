@@ -11,9 +11,8 @@ error_handlers:
     file: error_pages/dos_api_denial.html
 
 handlers:
-- url: /(.*\.(js|css|png))$
-  static_files: \1
-  upload: .*\.(js|css|png)$
+- url: /static
+  static_dir: static
 
 - url: /api/.*
   script: api.php
