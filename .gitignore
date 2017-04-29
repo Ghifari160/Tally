@@ -1,0 +1,4 @@
+tally-export/*
+temp/*
+*.ignore.*
+build/*

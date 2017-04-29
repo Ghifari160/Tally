@@ -1,5 +1,11 @@
 RewriteEngine on
 
+ErrorDocument 500 /error_pages/default_error.html
+ErrorDocument 404 /error_pages/default_error.html
+ErrorDocument 401 /error_pages/default_error.html
+
+SetEnv SRV_ENG apache
+
 RewriteCond %{REQUEST_URI} (.*)\.(js|css|png)$
 RewriteRule ^(.*)\.(js|css|png)$ $1.$2 [END]
 

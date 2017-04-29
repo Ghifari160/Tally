@@ -1,6 +1,15 @@
 runtime: php55
 api_version: 1
 
+env_variables:
+  SRV_ENG: 'gcloud'
+
+error_handlers:
+  - file: error_pages/default_error.html
+
+  - error_code: dos_api_denial
+    file: error_pages/dos_api_denial.html
+
 handlers:
 - url: /(.*\.(js|css|png))$
   static_files: \1
@@ -19,3 +28,4 @@ skip_files:
   - .htaccess
   - .git/.*
   - ^(.*)\.ignore\.(php|js|css|png|ini|md)$
+  - tally-export/.*
