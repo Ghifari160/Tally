@@ -33,7 +33,7 @@ function getAppIcons()
 		."<link rel=\"apple-touch-icon\" sizes=\"76x76\" href=\"/static/logo-76.png\">\n"
 		."<link rel=\"icon\" sizes=\"192x192\" href=\"/static/logo-192.png\">\n"
 		."<link rel=\"icon\" sizes=\"128x128\" href=\"/static/logo-128.png\">\n"
-		."<link rel=\"icon\" sizes=\"32x32\" href=\"/static/logo-32.png\">\n";
+		."<link rel=\"icon\" sizes=\"32x32\" href=\"//assets.ghifari160.com/assets/images/Logo-32.png\">\n";
 }
 
 function createGSPath($path)
