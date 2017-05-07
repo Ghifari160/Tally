@@ -18,8 +18,10 @@ not update the list you've already shared.**
 
 ## Contributing to Tally ##
 You can either:
-1. Wait until Tally is more open for contribution; or,
-2. Be impatient and submit a pull request, which will probably be ignored even after
+1. Wait until Tally is more open for contribution;
+2. Send an angry email to [Ghifari160][g16-about-githubProfile] which will probably
+be ignored; or,
+3. Be impatient and submit a pull request, which will probably be ignored even after
 Tally is open for contribution. **So don't be impatient.**
 
 ## About Tally ##
