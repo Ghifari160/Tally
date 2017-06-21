@@ -6,6 +6,20 @@ body,html
 	padding: 0;
 }
 
+input
+{
+	border: 1px solid #999;
+	outline: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+}
+
+input:focus
+{
+	outline: none;
+}
+
 #modal
 {
 	position: fixed;
@@ -26,7 +40,7 @@ body,html
 	left: 50%;
 	display: none;
 	min-width: 60%;
-	min-height: 40%;
+	min-height: 50px;
 	background: #fff;
 	border-radius: 3px;
 	border: 1px solid #ccc;
@@ -66,11 +80,13 @@ body,html
 	font-family: 'Open sans', sans-serif;
 	font-size: 40px;
 	margin: 0 auto 15px auto;
+	text-align: center;
 }
 
 #modal-dialog .body
 {
 	width: 100%;
+	display: table;
 }
 
 #modal-dialog .body
@@ -78,20 +94,38 @@ body,html
 	text-align: center;
 }
 
-#modal-dialog .body.options .ui
+#modal-dialog .body.options .ui,
+#modal-dialog .body.options-adv .ui
 {
 	width: 100%;
 	margin-bottom: 20px;
 }
 
-#modal-dialog .body.options .ui .label
+#modal-dialog .body.options .ui .label,
+#modal-dialog .body.options-adv .ui .label
 {
 	font-family: 'Open sans', sans-serif;
 	font-size: 30px;
 	font-weight: 300;
 }
 
-#modal-dialog .body.options .ui input
+#modal-dialog .body.options .ui .label a,
+#modal-dialog .body.options .ui .label a:visited,
+#modal-dialog .body.options-adv .ui .label a,
+#modal-dialog .body.options-adv .ui .label a:visited
+{
+	color: #167ac6;
+	text-decoration: none;
+}
+
+#modal-dialog .body.options .ui .label a:hover,
+#modal-dialog .body.options-adv .ui .label a:hover
+{
+	text-decoration: underline;
+}
+
+#modal-dialog .body.options .ui input,
+#modal-dialog .body.options-adv .ui input
 {
 	width: 95%;
 	height: 30px;
@@ -103,7 +137,8 @@ body,html
 	line-height: 30px;
 }
 
-#modal-dialog .body.export .btn
+#modal-dialog .body.export .btn,
+#modal-dialog .body.options-adv .btn
 {
 	display: inline-block;
 	width: 45%;
@@ -136,6 +171,13 @@ body,html
 #modal-dialog .body.export .btn:active
 {
 	background: #fbfbfb;
+}
+
+#modal-dialog .body.options-adv .btn
+{
+	width: 95%;
+	display: block;
+	margin: 0 auto;
 }
 
 .g16-header .g16-logo-container .g16-text

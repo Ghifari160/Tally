@@ -1,17 +1,11 @@
-<!DOCTYPE html>
+<?php require_once "/core.php"; ?><!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
-<title>Tally by Ghifari160</title>
+<title><?php getAppName(); ?></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="apple-mobile-web-app-title" content="Tally.Dev">
-<link rel="apple-touch-icon" href="/logo-120.png">
-<link rel="apple-touch-icon" sizes="152x152" href="/logo-152.png">
-<link rel="apple-touch-icon" sizes="180x180" href="/logo-180.png">
-<link rel="apple-touch-icon" sizes="76x76" href="/logo-76.png">
-<link rel="icon" sizes="192x192" href="/logo-192.png">
-<link rel="icon" sizes="128x128" href="/logo-128.png">
-<link rel="icon" sizes="32x32" href="/logo-32.png">
+<?php getAppIcons(); ?>
+<?php getAppJS(); ?>
 <style>
 #loading
 {
@@ -29,11 +23,7 @@
 
 <body>
 <div id="loading"></div>
-<noscript id="deferred-styles">
-	<link rel="stylesheet" href="/g16.css">
-	<link rel="stylesheet" href="/app.css">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i|Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i">
-</noscript>
+<noscript id="deferred-styles"><?php getAppCSS(); ?></noscript>
 <div id="modal"></div>
 <div id="modal-dialog"></div>
 
@@ -48,11 +38,7 @@
 
 <div class="tally-list">
 	<div class="ui">
-		<div>You have been disconnected due to suspicion of DOS.</div>
-		<div>
-			If this is an error, contact the developer
-			<a href="mailto:ghifari160@ghifari160.com?Subject=%5BTally%5D%20DOS%20Error">here</a>.
-		</div>
+		<div>{ERROR_MSG}</div>
 		<div><a href="/">Go Home</a></div>
 	</div>
 </div>
