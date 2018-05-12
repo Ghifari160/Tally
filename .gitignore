@@ -1,0 +1,8 @@
+# Tally
+# .gitignore
+
+# macOS files
+.DS_Store
+
+# Temporary files
+temp*

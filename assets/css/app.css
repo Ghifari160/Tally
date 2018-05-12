@@ -1,0 +1,9 @@
+.app-body pre, .app-body .pre {
+  background: #dedede;
+  border: 1px solid #666;
+  border-radius: 3px;
+}
+
+.app-body .pre {
+  white-space: pre;
+}

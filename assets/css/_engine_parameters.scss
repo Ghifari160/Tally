@@ -1,0 +1,72 @@
+$app-global-horizontal-margin: 2.5%;
+
+$app-header-height: 55px;
+$app-header-height-inner: 32px;
+$app-header-background: #333;
+
+$app-header-child-margin: 0 15px 0 0;
+
+$app-header-app-logo-background: url("https://assets.ghifari160.com/assets/images/Logo-32.png") #333;
+
+$app-header-app-name-font-family: "Arial", sans-serif;
+$app-header-app-name-font-weight: normal;
+$app-header-app-name-font-style: normal;
+$app-header-app-name-color: #fff;
+
+$app-header-link-font-family: $app-header-app-name-font-family;
+$app-header-link-font-weight: $app-header-app-name-font-weight;
+$app-header-link-font-style: $app-header-app-name-font-style;
+$app-header-link-color: $app-header-app-name-color;
+$app-header-link-text-decoration: none;
+
+$app-body-margin: 1.25% 0;
+$app-body-vertical-padding: 10px;
+$app-body-background: #fff;
+$app-body-font-family: "Arial", sans-serif;
+$app-body-font-weight: normal;
+$app-body-font-style: normal;
+$app-body-font-size: 16px;
+$app-body-color: #666;
+$app-body-text-decoration: none;
+
+$app-body-hr-margin: 20px 0;
+$app-body-hr-color: #666;
+
+$app-body-hn-margin: 5px 0;
+$app-body-hn-padding: 0;
+$app-body-hn-font-family: $app-body-font-family;
+$app-body-hn-font-weight: $app-body-font-weight;
+$app-body-hn-font-style: $app-body-font-style;
+$app-body-hn-color: $app-body-color;
+$app-body-hn-text-decoration: $app-body-text-decoration;
+
+$app-footer-vertical-padding: 10px;
+$app-footer-background: #fff;
+$app-footer-border-top: 1px solid #666;
+
+$app-footer-child-font-family: "Arial", sans-serif;
+$app-footer-child-font-style: normal;
+$app-footer-child-font-weight: normal;
+$app-footer-child-font-size: 16px;
+$app-footer-child-color: #999;
+
+$app-footer-link-font-family: $app-footer-child-font-family;
+$app-footer-link-font-style: $app-footer-child-font-style;
+$app-footer-link-font-weight: $app-footer-child-font-weight;
+$app-footer-link-font-size: $app-footer-child-font-size;
+$app-footer-link-color: $app-footer-child-color;
+$app-footer-link-text-decoration: underline;
+
+$app-footer-link-hover-font-family: $app-footer-child-font-family;
+$app-footer-link-hover-font-style: $app-footer-child-font-style;
+$app-footer-link-hover-font-weight: $app-footer-child-font-weight;
+$app-footer-link-hover-font-size: $app-footer-child-font-size;
+$app-footer-link-hover-color: $app-footer-child-color;
+$app-footer-link-hover-text-decoration: none;
+
+$app-footer-link-active-font-family: $app-footer-child-font-family;
+$app-footer-link-active-font-style: $app-footer-child-font-style;
+$app-footer-link-active-font-weight: $app-footer-child-font-weight;
+$app-footer-link-active-font-size: $app-footer-child-font-size;
+$app-footer-link-active-color: $app-footer-child-color;
+$app-footer-link-active-text-decoration: underline;

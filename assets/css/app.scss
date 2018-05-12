@@ -1,0 +1,34 @@
+$app-body-pre-background: #dedede;
+$app-body-pre-border: 1px solid #666;
+$app-body-pre-border-radius: 3px;
+
+.app-header
+{
+
+}
+
+.app-body
+{
+  %app-body-pre
+  {
+    background: $app-body-pre-background;
+    border: $app-body-pre-border;;
+    border-radius: $app-body-pre-border-radius;
+  }
+
+  pre
+  {
+    @extend %app-body-pre;
+  }
+
+  .pre
+  {
+    @extend %app-body-pre;
+    white-space: pre;
+  }
+}
+
+.app-footer
+{
+  
+}

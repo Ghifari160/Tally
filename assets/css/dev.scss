@@ -1,0 +1,101 @@
+$app-info-space-between-cells: 10px;
+$app-info-list-margin: 0 10px 0 0;
+$app-info-list-padding: 0 10px 0 0;
+$app-info-list-border-width: 2px;
+$app-info-list-border-style: solid;
+$app-info-list-border-color: #666;
+
+.app-details
+{
+  display: table;
+
+  .row
+  {
+    display: table-row;
+
+    div
+    {
+      display: table-cell;
+
+      ul
+      {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        li
+        {
+          display: inline-block;
+          vertical-align: top;
+          margin: $app-info-list-margin;
+          padding: $app-info-list-padding;
+          border-right: $app-info-list-border-width
+            $app-info-list-border-style $app-info-list-border-color;
+        }
+
+        li:last-child
+        {
+          margin: 0;
+          padding: 0;
+          border: none;
+        }
+      }
+    }
+
+    div:nth-child(odd)
+    {
+      padding: 0 ($app-info-space-between-cells / 2) 0 0;
+      font-weight: bolder;
+    }
+
+    div:nth-child(even)
+    {
+      padding: 0 0 0 ($app-info-space-between-cells / 2);
+    }
+  }
+}
+
+$g16-print-css-background: #dedede;
+$g16-print-css-border-width: 1px;
+$g16-print-css-border-style: solid;
+$g16-print-css-border-color: #666;
+$g16-print-css-border-radius: 3px;
+.g16-print-css
+{
+  background: $g16-print-css-background;
+  border: $g16-print-css-border-width $g16-print-css-border-style
+    $g16-print-css-border-color;
+  border-radius: $g16-print-css-border-radius;
+}
+
+$footer-menu-list-style: none;
+$footer-menu-list-margin: 0;
+$footer-menu-list-padding: 0;
+$footer-menu-list-child-display: inline-block;
+$footer-menu-list-child-margin: 0 10px 0 0;
+$footer-menu-list-child-padding: 0 10px 0 0;
+$footer-menu-list-child-border-right: 1px solid #666;
+.footer-menu
+{
+  ul
+  {
+    list-style: $footer-menu-list-style;
+    margin: $footer-menu-list-margin;
+    padding: $footer-menu-list-padding;
+
+    li
+    {
+      display: $footer-menu-list-child-display;
+      margin: $footer-menu-list-child-margin;
+      padding: $footer-menu-list-child-padding;
+      border-right: $footer-menu-list-child-border-right;
+    }
+
+    li:last-child
+    {
+      margin: 0;
+      padding: 0;
+      border: none;
+    }
+  }
+}

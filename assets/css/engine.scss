@@ -1,0 +1,242 @@
+@import "engine_parameters";
+
+body, html
+{
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.app-header
+{
+  width: (100% - ($app-global-horizontal-margin * 2));
+  height: $app-header-height-inner;
+  padding: ($app-header-height - $app-header-height-inner) / 2
+      $app-global-horizontal-margin;
+  background: $app-header-background;
+  text-align: center;
+
+  %app-header-child
+  {
+    display: inline-block;
+    vertical-align: middle;
+    margin: $app-header-child-margin;
+    height: $app-header-height-inner;
+  }
+
+  %app-header-child:last-child
+  {
+    margin: 0;
+  }
+
+  %app-header-link
+  {
+    font-family: $app-header-link-font-family;
+    font-weight: $app-header-link-font-weight;
+    font-style: $app-header-link-font-style;
+    color: $app-header-link-color;
+    text-decoration: $app-header-link-text-decoration;
+  }
+
+  .app-logo
+  {
+    @extend %app-header-child;
+    width: $app-header-height-inner;
+    background: $app-header-app-logo-background;
+  }
+
+  .app-name
+  {
+    @extend %app-header-child;
+    font-family: $app-header-app-name-font-family;
+    font-size: $app-header-height-inner;
+    line-height: $app-header-height-inner;
+    color: $app-header-app-name-color;
+  }
+
+  a
+  {
+    @extend %app-header-link;
+  }
+
+  a:link
+  {
+    @extend %app-header-link;
+  }
+
+  a:visited
+  {
+    @extend %app-header-link;
+  }
+
+  a:hover
+  {
+    @extend %app-header-link;
+  }
+
+  a:active
+  {
+    @extend %app-header-link;
+  }
+}
+
+.app-body
+{
+  width: (100% - $app-global-horizontal-margin * 2);
+  margin: $app-body-margin;
+  padding: $app-body-vertical-padding $app-global-horizontal-margin;
+  background: $app-body-background;
+
+  font-family: $app-body-font-family;
+  font-weight: $app-body-font-weight;
+  font-style: $app-body-font-style;
+  font-size: $app-body-font-size;
+  color: $app-body-color;
+
+  %app-body-hn
+  {
+    margin: $app-body-hn-margin;
+    padding: $app-body-hn-padding;
+    font-family: $app-body-hn-font-family;
+    font-weight: $app-body-hn-font-weight;
+    font-style: $app-body-hn-font-style;
+    color: $app-body-hn-color;
+    text-decoration: $app-body-hn-text-decoration;
+  }
+
+  hr
+  {
+    margin: $app-body-hr-margin;
+    border-color: $app-body-hr-color;
+    background-color: $app-body-hr-color;
+  }
+
+  h1
+  {
+    @extend %app-body-hn;
+  }
+
+  h2
+  {
+    @extend %app-body-hn;
+  }
+
+  h3
+  {
+    @extend %app-body-hn;
+  }
+
+  h4
+  {
+    @extend %app-body-hn;
+  }
+
+  h5
+  {
+    @extend %app-body-hn;
+  }
+
+  h6
+  {
+    @extend %app-body-hn;
+  }
+}
+
+.app-footer
+{
+  width: (100% - $app-global-horizontal-margin * 2);
+  padding: $app-footer-vertical-padding $app-global-horizontal-margin;
+  background: $app-footer-background;
+  border-top: $app-footer-border-top;
+
+  %app-footer-a
+  {
+    font-family: $app-footer-link-font-family;
+    font-style: $app-footer-link-font-style;
+    font-weight: $app-footer-link-font-weight;
+    font-size: $app-footer-link-font-size;
+    color: $app-footer-link-color;
+    text-decoration: $app-footer-link-text-decoration;
+  }
+
+  a,
+  a:visited,
+  a:link
+  {
+    @extend %app-footer-a;
+  }
+
+  a:hover
+  {
+    font-family: $app-footer-link-hover-font-family;
+    font-style: $app-footer-link-hover-font-style;
+    font-weight: $app-footer-link-hover-font-weight;
+    font-size: $app-footer-link-hover-font-size;
+    color: $app-footer-link-hover-color;
+    text-decoration: $app-footer-link-hover-text-decoration;
+  }
+
+  a:active
+  {
+    font-family: $app-footer-link-active-font-family;
+    font-style: $app-footer-link-active-font-style;
+    font-weight: $app-footer-link-active-font-weight;
+    font-size: $app-footer-link-active-font-size;
+    color: $app-footer-link-active-color;
+    text-decoration: $app-footer-link-active-text-decoration;
+  }
+
+  %app-footer-child
+  {
+    display: table;
+    margin: 0 auto;
+    font-family: $app-footer-child-font-family;
+    font-size: $app-footer-child-font-size;
+    color: $app-footer-child-color;
+  }
+
+  .app-version
+  {
+    @extend %app-footer-child;
+  }
+
+  .app-copyright
+  {
+    @extend %app-footer-child;
+  }
+
+  $footer-menu-list-style: none;
+  $footer-menu-list-margin: 0;
+  $footer-menu-list-padding: 0;
+  $footer-menu-list-child-display: inline-block;
+  $footer-menu-list-child-margin: 0 10px 0 0;
+  $footer-menu-list-child-padding: 0 10px 0 0;
+  $footer-menu-list-child-border-right: 1px solid #666;
+  .footer-menu
+  {
+    @extend %app-footer-child;
+
+    ul
+    {
+      list-style: $footer-menu-list-style;
+      margin: $footer-menu-list-margin;
+      padding: $footer-menu-list-padding;
+
+      li
+      {
+        display: $footer-menu-list-child-display;
+        margin: $footer-menu-list-child-margin;
+        padding: $footer-menu-list-child-padding;
+        border-right: $footer-menu-list-child-border-right;
+      }
+
+      li:last-child
+      {
+        margin: 0;
+        padding: 0;
+        border: none;
+      }
+    }
+  }
+}
