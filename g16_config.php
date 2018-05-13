@@ -1,18 +1,28 @@
 <?php
+// Tally
+// const APP_PID = "1607135186";
+// const APP_INTERNAL_ID = "g16Tally";
+// const APP_NAMESPACE = "com.ghifari160.tally";
+//
+// const APP_NAME = "Tally";
+// const APP_VER = "1.0";
+// const APP_VER_BUILDHASH = "TODO";
+
+// Tally.Dev
 const APP_PID = "1607135199";
 const APP_INTERNAL_ID = "g16TallyDev";
 const APP_NAMESPACE = "com.ghifari160.dev.tally";
 
 const APP_NAME = "Tally.Dev";
-const APP_VER = "1.0.0.0";
-const APP_VER_BUILDHASH = "";
+const APP_VER = "1.0";
+const APP_VER_BUILDHASH = "000dev";
 const APP_COPYRIGHT = "© 2018 GHIFARI160, all rights reserved.";
 
 const APP_URI = "http://ghifari160.com";
 const APP_ISSUES_URI = "http://ghifari160.com";
 
 const APP_LICENSE = "MIT License";
-const APP_LICENSE_URI = "https://github.com/ghifari160/g16Engine/master/blob/LICENSE";
+const APP_LICENSE_URI = "";
 
 const APP_SUPPORT_URI = "http://ghifari160.com";
 const APP_SUPPORT_EMAIL = "support@ghifari160.com";
@@ -20,9 +30,6 @@ const APP_SUPPORT_EMAIL = "support@ghifari160.com";
 const APP_AUTHOR_NAME = "GHIFARI160";
 const APP_AUTHOR_URI = "http://ghifari160.com";
 const APP_AUTHOR_EMAIL = "business@ghifari160.com";
-
-const APP_CONTRIBUTORS_NAMES = array("Davis Parks");
-const APP_CONTRIBUTORS_URIS = array("");
 
 // =====================
 // = Engine Parameters =

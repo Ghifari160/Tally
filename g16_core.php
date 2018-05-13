@@ -1,7 +1,10 @@
 <?php
 require_once "g16_config.php";
 
-const ENG_PID = "160-713-612-9";
+$APP_CONTRIBUTORS_NAMES = array("Davis Parks");
+$APP_CONTRIBUTORS_URIS = array("#");
+
+const ENG_PID = "160-713-612-7";
 const ENG_INTERNAL_ID = "g16Engine";
 const ENG_NAMESPACE = "com.ghifari160.g16.engine";
 
@@ -14,8 +17,7 @@ const ENG_URI = "http://ghifari160.com";
 const ENG_ISSUES_URI = "http://ghifari160.com";
 
 const ENG_LICENSE = "MIT License";
-const ENG_LICENSE_URI = "https://raw.githubusercontent.com/Ghifari160/"
-                       ."g16Engine/master/LICENSE";
+const ENG_LICENSE_URI = "https://raw.githubusercontent.com/Ghifari160/g16Engine/master/LICENSE";
 
 const ENG_SUPPORT_URI = "http://ghifari160.com";
 const ENG_SUPPORT_EMAIL = "support@ghifari160.com";
@@ -24,8 +26,8 @@ const ENG_AUTHOR_NAME = "GHIFARI160";
 const ENG_AUTHOR_URI = "http://ghifari160.com";
 const ENG_AUTHOR_EMAIL = "business@ghifari160.com";
 
-const ENG_CONTRIBUTORS_NAMES = array();
-const ENG_CONTRIBUTORS_URIS = array();
+$ENG_CONTRIBUTORS_NAMES = array();
+$ENG_CONTRIBUTORS_URIS = array();
 
 // Hooks and actions array
 $g16_hooks_array = array();
@@ -447,32 +449,34 @@ function get_app_contributors()
 {
   $ret = array();
 
+  global $APP_CONTRIBUTORS_URIS, $APP_CONTRIBUTORS_NAMES;
+
   // Iterate the first phase loop n number of times, where n is the size of the
   // smaller array
-  if(count(APP_CONTRIBUTORS_URIS) <= count(APP_CONTRIBUTORS_NAMES))
-    $loop_limit = count(APP_CONTRIBUTORS_URIS);
-  else if(count(APP_CONTRIBUTORS_URIS) >= count(APP_CONTRIBUTORS_NAMES))
-    $loop_limit = count(APP_CONTRIBUTORS_NAMES);
+  if(count($APP_CONTRIBUTORS_URIS) <= count($APP_CONTRIBUTORS_NAMES))
+    $loop_limit = count($APP_CONTRIBUTORS_URIS);
+  else if(count($APP_CONTRIBUTORS_URIS) >= count($APP_CONTRIBUTORS_NAMES))
+    $loop_limit = count($APP_CONTRIBUTORS_NAMES);
 
   // Compile contributors array from the two arrays
   $i = 0;
   for(; $i < $loop_limit; $i++)
   {
     $o = array(
-      "name" => APP_CONTRIBUTORS_NAMES[$i],
-      "uri" => APP_CONTRIBUTORS_URIS[$i]
+      "name" => $APP_CONTRIBUTORS_NAMES[$i],
+      "uri" => $APP_CONTRIBUTORS_URIS[$i]
     );
 
     array_push($ret, $o);
   }
 
   // Append the contributors array with contributors with null URIs
-  if(count(APP_CONTRIBUTORS_URIS) <= count(APP_CONTRIBUTORS_NAMES))
+  if(count($APP_CONTRIBUTORS_URIS) <= count($APP_CONTRIBUTORS_NAMES))
   {
-    for($j = $i; $j < count(APP_CONTRIBUTORS_NAMES); $j++)
+    for($j = $i; $j < count($APP_CONTRIBUTORS_NAMES); $j++)
     {
       $o = array(
-        "name" => APP_CONTRIBUTORS_NAMES[$i],
+        "name" => $APP_CONTRIBUTORS_NAMES[$i],
         "uri" => NULL
       );
 
