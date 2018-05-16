@@ -203,6 +203,55 @@
     return (obj.list.length > 0) ? JSON.stringify(obj) : "";
   }
 
+  // Gets the list in CSV
+  // @return  string            The list in CSV
+  function tally_get_list_csv()
+  {
+    var csv = "identifier,value\n";
+
+    list.children().each(function()
+    {
+      csv += $(this).find(".identifier").html() + ","
+           + $(this).find(".value").html() + "\n";
+    });
+
+    return csv;
+  }
+
+  // Gets the list in TSV
+  // @return  string            The list in TSV
+  function tally_get_list_tsv()
+  {
+    var tsv = "identifier\tvalue\n";
+
+    list.children().each(function()
+    {
+      tsv += $(this).find(".identifier").html() + "\t"
+           + $(this).find(".value").html() + "\n";
+    });
+
+    return tsv;
+  }
+
+  // Gets the list in SQL
+  // @return  string            The list in SQL
+  function tally_get_list_sql()
+  {
+    var sql = "CREATE TABLE " + options.name + " (\n"
+            + "\tidentifier text,\n"
+            + "\tvalue int\n"
+            + ");\n";
+
+    list.children().each(function()
+    {
+      sql += "INSERT INTO " + options.name + " VALUES('"
+           + $(this).find(".identifier").html() + "','"
+           + $(this).find(".value").html() + "');\n";
+    });
+
+    return sql;
+  }
+
   // Sets the list from JSON
   // @param   string    json    A valid JSON string of a Tally list (list v2.0)
   // @return  bool              @table
@@ -541,6 +590,50 @@
       }
 
       tally_modal_toggle();
+    });
+
+    // Handle export UI
+    $("body").on("click", "#modal-dialog .body .container .btn", function(e)
+    {
+      var blob, url, ext;
+
+      // CSV export
+      if($(this).hasClass("csv"))
+      {
+        ext = "csv";
+        blob = new Blob([tally_get_list_csv()],
+            {type: "text/csv;charset=utf-8;"});
+      }
+      // TSV export
+      else if($(this).hasClass("tsv"))
+      {
+        ext = "tsv";
+        blob = new Blob([tally_get_list_tsv()],
+            {type: "text/tsv;charset=utf-8;"});
+      }
+      // SQL export
+      else if($(this).hasClass("sql"))
+      {
+        ext = "sql";
+        blob = new Blob([tally_get_list_sql()],
+            {type: "application/sql;charset=urf-8;"});
+      }
+
+      url = URL.createObjectURL(blob);
+      var link = document.createElement("a");
+
+      // Download from Blob in supported browsers
+      if(link.download !== undefined)
+      {
+        link.setAttribute("href", url);
+        link.setAttribute("download", options.name + "." + ext);
+        link.style = "visibility:hidden;";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+      else
+        window.open(url, "tally_export");
     });
 
     // Handle options UI
