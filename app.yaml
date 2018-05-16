@@ -1,0 +1,17 @@
+runtime: php55
+api_version: 1
+
+default_expiration: "0m"
+
+handlers:
+- url: /assets
+  static_dir: assets
+
+- url: /about
+  script: tally_about.php
+
+- url: /reports
+  script: tally_reports.php
+
+- url: /.*
+  script: tally.php
