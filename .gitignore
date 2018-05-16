@@ -8,4 +8,4 @@
 temp*
 
 # *Binary* files
-assets/css/app.css
+assets/css/*.css
