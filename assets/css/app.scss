@@ -1,34 +1,456 @@
-$app-body-pre-background: #dedede;
-$app-body-pre-border: 1px solid #666;
-$app-body-pre-border-radius: 3px;
+@import "engine_parameters";
 
 .app-header
 {
 
 }
 
+%tally-open-sans
+{
+  font-family: "Open sans", sans-serif;
+}
+
+%tally-open-sans-400
+{
+  @extend %tally-open-sans;
+  font-weight: 400;
+  font-style: normal;
+}
+
+%tally-open-sans-400i
+{
+  @extend %tally-open-sans;
+  font-weight: 400;
+  font-style: italic;
+}
+
+%tally-open-sans-300
+{
+  @extend %tally-open-sans;
+  font-weight: 300;
+  font-style: normal;
+}
+
+%tally-open-sans-300i
+{
+  @extend %tally-open-sans;
+  font-weight: 300;
+  font-style: italic;
+}
+
+%tally-roboto
+{
+  font-family: "Roboto", sans-serif;
+}
+
+%tally-roboto-100
+{
+  @extend %tally-roboto;
+  font-weight: 100;
+  font-style: normal;
+}
+
+%tally-roboto-100i
+{
+  @extend %tally-roboto;
+  font-weight: 100;
+  font-style: italic;
+}
+
+%tally-roboto-300
+{
+  @extend %tally-roboto;
+  font-weight: 300;
+  font-style: normal;
+}
+
+%tally-roboto-300i
+{
+  @extend %tally-roboto;
+  font-weight: 300;
+  font-style: italic;
+}
+
+%tally-roboto-400
+{
+  @extend %tally-roboto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+%tally-roboto-400i
+{
+  @extend %tally-roboto;
+  font-weight: 400;
+  font-style: italic;
+}
+
+%tally-input-text
+{
+  width: 100%;
+  text-align: center;
+}
+
+%btn-common
+{
+  @extend %tally-roboto-100;
+  height: 32px;
+  padding: (50px - 32px) / 2;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 32px;
+  color: #333;
+  cursor: pointer;
+}
+
+%btn
+{
+  @extend %btn-common;
+  background: #dedede;
+}
+
+%btn:hover
+{
+  @extend %btn-common;
+  background: #ebebeb;
+}
+
+%btn:active
+{
+  @extend %btn-common;
+  background: #fbfbfb;
+}
+
+%a-lv
+{
+  text-decoration: none;
+}
+
+%a
+{
+  @extend %a-lv;
+}
+
+%a:link
+{
+  @extend %a-lv;
+}
+
+%a:visited
+{
+  @extend %a-lv;
+}
+
+%a:hover
+{
+  text-decoration: underline;
+}
+
+%a:active
+{
+  @extend %a-lv;
+}
+
+%tally-list-ui-a
+{
+  color: #167ac6;
+}
+
+%modal-common
+{
+  position: fixed;
+  display: none;
+  background: #fff;
+}
+
+#modal
+{
+  @extend %modal-common;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.5;
+}
+
+#modal-dialog
+{
+  @extend %modal-common;
+  border: 1px solid #333;
+  border-radius: 3px;
+  min-width: 500px;
+  min-height: 250px;
+
+  %modal-dialog-child
+  {
+    margin-bottom: 10px;
+
+    .container
+    {
+      margin: 0 auto;
+    }
+  }
+
+  %modal-dialog-child:last-child
+  {
+    margin-bottom: 0;
+  }
+
+  .header
+  {
+    @extend %modal-dialog-child;
+    height: 50px;
+
+    .title
+    {
+      @extend %tally-roboto-400;
+      display: table;
+      margin: (50px - 32px) / 2 auto;
+      font-size: 32px;
+    }
+  }
+
+  .body
+  {
+    @extend %modal-dialog-child;
+
+    .container
+    {
+      width: 95%;
+
+      .btn
+      {
+        @extend %btn;
+        display: table;
+        margin: 0 auto 10px auto;
+      }
+
+      .opt
+      {
+        width: 100%;
+        margin-bottom: 10px;
+
+        .label
+        {
+          @extend %tally-roboto-300;
+          display: table;
+          margin: 0 auto;
+          font-size: 20px;
+        }
+
+        input[type=text], input[type=tel]
+        {
+          @extend %tally-input-text;
+          @extend %tally-open-sans-300;
+          height: 20px;
+          font-size: 20px;
+          padding: 10px 0;
+        }
+      }
+    }
+  }
+
+  .footer
+  {
+    @extend %modal-dialog-child;
+  }
+}
+
+a
+{
+  @extend %a;
+}
+
+.hidden
+{
+  display: none !important;
+}
+
 .app-body
 {
-  %app-body-pre
+  overflow: auto;
+
+  %tally-section
   {
-    background: $app-body-pre-background;
-    border: $app-body-pre-border;;
-    border-radius: $app-body-pre-border-radius;
+    display: block;
+    width: 100%;
+    padding: 20px 0;
+    text-align: center;
   }
 
-  pre
+  %tally-section:first-child
   {
-    @extend %app-body-pre;
+    padding-top: 0;
   }
 
-  .pre
+  %hn
   {
-    @extend %app-body-pre;
-    white-space: pre;
+    display: table;
+    margin: 10px auto;
+  }
+
+  %hn:first-child
+  {
+    margin-top: 0;
+  }
+
+  %hn:last-child
+  {
+    margin-bottom: 0;
+  }
+
+  h1, h2, h3, h4, h5, h6
+  {
+    @extend %hn;
+  }
+
+  .tally-input
+  {
+    @extend %tally-section;
+    border-bottom: 1px solid #333;
+
+    input[type=text]
+    {
+      @extend %tally-input-text;
+      @extend %tally-open-sans-300;
+      height: 32px;
+      padding: (50px - 32px) / 2 0;
+      font-size: 32px;
+    }
+  }
+
+  .tally-list
+  {
+    @extend %tally-section;
+    overflow-y: scroll;
+
+    %tally-list-section
+    {
+      margin: 0 auto 10px auto;
+    }
+
+    %tally-list-section:last-child
+    {
+      margin-bottom: 0;
+    }
+
+    .ui
+    {
+      @extend %tally-list-section;
+      font-size: 32px;
+
+      div
+      {
+        @extend %tally-roboto-300;
+        margin-bottom: 5px;
+
+        a
+        {
+          @extend %a;
+          @extend %tally-list-ui-a;
+          @extend %tally-roboto-300;
+        }
+
+        ul
+        {
+          list-style: none;
+          margin: 0;
+          padding: 0;
+
+          li
+          {
+            display: inline-block;
+            padding-right: 10px;
+          }
+
+          li:last-child
+          {
+            padding-right: 0;
+          }
+        }
+      }
+
+      div:last-child
+      {
+        margin-bottom: 0;
+      }
+    }
+
+    .list
+    {
+      @extend %tally-list-section;
+      display: table;
+      border-spacing: 20px 10px;
+      font-size: 30px;
+      color: #333;
+
+      .item
+      {
+        display: table-row;
+
+        %tally-list-item-common
+        {
+          display: table-cell;
+          vertical-align: middle;
+          text-align: left;
+        }
+
+        .identifier
+        {
+          @extend %tally-list-item-common;
+          margin-right: auto;
+          word-break: break-all;
+          word-wrap: normal;
+        }
+
+        .value
+        {
+          @extend %tally-list-item-common;
+        }
+      }
+    }
+  }
+
+  .app-details
+  {
+    margin: 0 auto;
+
+    a
+    {
+      @extend %a;
+      @extend %tally-list-ui-a;
+    }
   }
 }
 
 .app-footer
 {
-  
+  .menu
+  {
+    ul
+    {
+      display: table;
+      margin: 0 auto;
+      padding: 0;
+      list-style: none;
+
+      li
+      {
+        display: inline-block;
+        padding-right: 10px;
+        margin-right: 10px;
+        border-right: 1px solid #333;
+        vertical-align: top;
+      }
+
+      li:last-child
+      {
+        padding-right: 0;
+        margin-right: 0;
+        border-right: none;
+      }
+    }
+  }
 }
