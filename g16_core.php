@@ -246,7 +246,7 @@ function g16_enqueue_asset(&$array, $asset_id, $asset_uri, $asset_ver = APP_VER)
 // @param     string      $script_uri  The URI of the script.
 // @param     string      $script_ver  ${opt} The version of the script. If it's
 // unspecified, it will be assigned as ${APP_VER}.
-function enqueue_script($script_id, $script_uri, $script_ver)
+function enqueue_script($script_id, $script_uri, $script_ver = NULL)
 {
   global $g16_scripts_array;
   g16_enqueue_asset($g16_scripts_array, $script_id, $script_uri, $script_ver);
@@ -257,7 +257,7 @@ function enqueue_script($script_id, $script_uri, $script_ver)
 // @param     string      $style_uri  The URI of the stylesheet.
 // @param     string      $style_ver  ${opt} The version of the stylesheet. If
 // it's unspecified, it will be assigned as ${APP_VER}.
-function enqueue_style($style_id, $style_uri, $style_ver)
+function enqueue_style($style_id, $style_uri, $style_ver = NULL)
 {
   global $g16_styles_array;
   g16_enqueue_asset($g16_styles_array, $style_id, $style_uri, $style_ver);
