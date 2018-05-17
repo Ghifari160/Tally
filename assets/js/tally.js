@@ -415,6 +415,21 @@
     }
   }
 
+  // Resizes the app body
+  function tally_body_resize()
+  {
+    $(".app-body .tally-list").css(
+    {
+      "max-height": $(window).outerHeight()
+          - $(".app-header").outerHeight(true)
+          - (($(".app-body").find("h1.name").length > 0) ?
+              $(".app-body h1.name").outerHeight(true) : 0)
+          - $(".app-body .tally-input").outerHeight(true)
+          - $(".app-body .tally-list .ui.top").outerHeight(true)
+          - $(".app-footer").outerHeight(true) + "px"
+    });
+  }
+
   $(document).ready(function()
   {
     list = $(".app-body .tally-list .list");
@@ -448,14 +463,7 @@
     }
 
     // Sets the default max-height
-    $(".app-body .tally-list").css(
-    {
-      "max-height": $(window).outerHeight()
-          - $(".app-header").outerHeight(true)
-          - $(".app-body .tally-input").outerHeight(true)
-          - $(".app-body .tally-list .ui.top").outerHeight(true)
-          - $(".app-footer").outerHeight(true) + "px"
-    });
+    tally_body_resize();
 
     // Prepend the modal divs
     $("body").prepend("<div id=\"modal\"></div><div id=\"modal-dialog\"></div>");
@@ -464,15 +472,7 @@
     $(window).on("resize", function()
     {
       tally_modal_reposition();
-      // Sets the default max-height
-      $(".app-body .tally-list").css(
-      {
-        "max-height": $(window).outerHeight()
-            - $(".app-header").outerHeight(true)
-            - $(".app-body .tally-input").outerHeight(true)
-            - $(".app-body .tally-list .ui.top").outerHeight(true)
-            - $(".app-footer").outerHeight(true) + "px"
-      });
+      tally_body_resize();
     });
 
     $("body").on("keypress", ".app-body .tally-input .item-input", function(e)
@@ -718,6 +718,7 @@
         }
       }
 
+      tally_body_resize();
       tally_update_instanceURI();
     });
   });
