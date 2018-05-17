@@ -15,7 +15,7 @@ const APP_NAMESPACE = "com.ghifari160.dev.tally";
 
 const APP_NAME = "Tally.Dev";
 const APP_VER = "1.0";
-const APP_VER_BUILDHASH = "dev000";
+const APP_VER_BUILDHASH = "dev001";
 
 // Common
 const APP_COPYRIGHT = "© 2018 GHIFARI160, all rights reserved.";
