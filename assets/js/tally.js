@@ -195,7 +195,7 @@
     {
       var item = {};
       item.identifier = punycode.toAscii($(this).find(".identifier").html());
-      item.value = $(this).find(".value").html();
+      item.value = punycode.toAscii($(this).find(".value").html());
 
       obj.list.push(item);
     });
@@ -246,7 +246,7 @@
     {
       sql += "INSERT INTO " + options.name + " VALUES('"
            + punycode.toAscii($(this).find(".identifier").html())
-           + "','" + $(this).find(".value").html() + "');\n";
+           + "','" + punycode.toAscii($(this).find(".value").html()) + "');\n";
     });
 
     return sql;
@@ -278,7 +278,8 @@
     {
       var item = obj.list[i];
 
-      tally_update_item(punycode.toUnicode(item.identifier), "=" + item.value);
+      tally_update_item(punycode.toUnicode(item.identifier), "="
+          + punycode.toUnicode(item.value));
     }
 
     // Count the length of the list
