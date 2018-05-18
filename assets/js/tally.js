@@ -99,6 +99,8 @@
     // create an item.
     if(!done && deltaVal.substring(0, 1) == "=")
       list.append(tally_generate_item(identifier, deltaVal.substring(1)));
+
+    tally_update_ui();
   }
 
   // Handles item input
@@ -173,6 +175,41 @@
       ret += "<footer class=\"footer\">" + footerEl + "</footer>";
 
     $("#modal-dialog").html(ret);
+  }
+
+  // Gets the list length
+  // @param   bool    includeConfig   @table
+  // `true` => include configuration keys in the total count
+  // `false` => ignore configuration keys from the count
+  // @return  int                     The length of the list
+  function tally_list_length(includeConfig)
+  {
+    var l = 0;
+
+    list.children().each(function()
+    {
+      var identifier = $(this).find(".identifier").html();
+
+      if(identifier.substring(0, 21) == "com.ghifari160.tally."
+          && includeConfig)
+        l++;
+      else if(identifier.substring(0, 21) != "com.ghifari160.tally.")
+        l++;
+    });
+
+    return l;
+  }
+
+  // Updates list UI
+  function tally_update_ui()
+  {
+    var l = tally_list_length(false),
+        exportUI = $(".app-body .tally-list .ui.top").find(".export");
+
+    if(l > 0)
+      exportUI.parent().removeClass("hidden");
+    else
+      exportUI.parent().addClass("hidden");
   }
 
   // Gets the list in JSON
