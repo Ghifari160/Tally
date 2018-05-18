@@ -28,7 +28,7 @@ recall_scripts();
       <div>
         <ul>
           <li><a href="#" class="options">Options</a></li>
-          <li><a href="#" class="export">Export</a></li>
+          <li class="hidden"><a href="#" class="export">Export</a></li>
         </ul>
       </div>
     </div>
