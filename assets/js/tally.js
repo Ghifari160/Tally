@@ -213,14 +213,19 @@
   }
 
   // Gets the list in JSON
-  // @return    string            @table
+  // @param     bool    includeConfigs    Include configuration. Default:
+  // `true` @table
+  // true => include configuration keys
+  // false => do not include configuration keys
+  // @return    string                    @table
   // The list in JSON => if the list is not empty
   // Emtpy string => if the list is empty
-  function tally_get_list_JSON()
+  function tally_get_list_JSON(includeConfigs)
   {
     var obj = {};
 
     obj.version = "2.0";
+    obj.namespace = "com.ghifari160.tally.list.json";
 
     obj.tally = {};
     obj.tally.version = "1.0";
@@ -228,9 +233,18 @@
 
     obj.list = [];
 
+    if(typeof includeConfigs == "undefined")
+      includeConfigs = true;
+
     list.children().each(function()
     {
       var item = {};
+
+      // Skip configuration keys
+      if(!includeConfigs && $(this).find(".identifier").html().substring(0, 21)
+          == "com.ghifari160.tally.")
+        return;
+
       item.identifier = punycode.toAscii($(this).find(".identifier").html());
       item.value = punycode.toAscii($(this).find(".value").html());
 
@@ -248,6 +262,11 @@
 
     list.children().each(function()
     {
+      // Skip configuration keys
+      if($(this).find(".identifier").html().substring(0, 21)
+          == "com.ghifari160.tally.")
+        return;
+
       csv += $(this).find(".identifier").html() + ","
            + $(this).find(".value").html() + "\n";
     });
@@ -263,6 +282,11 @@
 
     list.children().each(function()
     {
+      // Skip configuration keys
+      if($(this).find(".identifier").html().substring(0, 21)
+          == "com.ghifari160.tally.")
+        return;
+
       tsv += $(this).find(".identifier").html() + "\t"
            + $(this).find(".value").html() + "\n";
     });
@@ -281,12 +305,44 @@
 
     list.children().each(function()
     {
+      // Skip configuration keys
+      if($(this).find(".identifier").html().substring(0, 21)
+          == "com.ghifari160.tally.")
+        return;
+
       sql += "INSERT INTO " + options.name + " VALUES('"
            + punycode.toAscii($(this).find(".identifier").html())
            + "','" + punycode.toAscii($(this).find(".value").html()) + "');\n";
     });
 
     return sql;
+  }
+
+  // Downloads Blob
+  // @param   string    ext     Extension of the file name.
+  // @param   Blob      blob    Blob to be downloaded.
+  function tally_downloadBlob(ext, blob)
+  {
+    var url, link;
+
+    url = URL.createObjectURL(blob);
+    link = document.createElement("a");
+
+    // Download from Blob URL in supported browsers
+    if(link.download !== undefined)
+    {
+      link.setAttribute("href", url);
+      link.setAttribute("download", options.name + "." + ext);
+      link.style = "visibility:hidden;";
+
+      // Download the Blob
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    // Open the Blob in a new tab
+    else
+      window.open(url, "tally_export");
   }
 
   // Sets the list from JSON
@@ -560,8 +616,10 @@
       {
         title = "Export";
         bodyEl = "<div class=\"container\">"
+               + "<div class=\"btn xlsx\">Excel</div>"
                + "<div class=\"btn csv\">CSV</div>"
                + "<div class=\"btn tsv\">TSV</div>"
+               + "<div class=\"btn json\">JSON</div>"
                + "<div class=\"btn sql\">SQL</div>"
                + "</div>";
       }
@@ -633,7 +691,7 @@
     // Handle export UI
     $("body").on("click", "#modal-dialog .body .container .btn", function(e)
     {
-      var blob, url, ext;
+      var blob, ext;
 
       // CSV export
       if($(this).hasClass("csv"))
@@ -654,24 +712,27 @@
       {
         ext = "sql";
         blob = new Blob([tally_get_list_sql()],
-            {type: "application/sql;charset=urf-8;"});
+            {type: "application/sql;charset=utf-8;"});
       }
-
-      url = URL.createObjectURL(blob);
-      var link = document.createElement("a");
-
-      // Download from Blob in supported browsers
-      if(link.download !== undefined)
+      // JSON export
+      else if($(this).hasClass("json"))
       {
-        link.setAttribute("href", url);
-        link.setAttribute("download", options.name + "." + ext);
-        link.style = "visibility:hidden;";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        ext = "json";
+        blob = new Blob([tally_get_list_JSON()],
+            {type: "application/json;charset=utf-8;"});
       }
-      else
-        window.open(url, "tally_export");
+      // Excel export
+      else if($(this).hasClass("xlsx"))
+      {
+        xl.generate(tally_get_list_JSON(false), function(blob)
+        {
+          tally_downloadBlob("xlsx", blob);
+        });
+
+        return;
+      }
+
+      tally_downloadBlob(ext, blob);
     });
 
     // Handle options UI
