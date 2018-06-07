@@ -382,7 +382,7 @@ function generate_xml(strXML)
   return ret;
 }
 
-const core_excel = {
+var core_excel = {
   loadJSON: loadJSON,
 
   generate_relationships_root: generate_relationships_root,
