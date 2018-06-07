@@ -15,6 +15,8 @@ function tally_add_scripts()
 {
   enqueue_script("js-base64", g16_asset_uri("", "base64.js", "js-base64"));
   enqueue_script("punycode", g16_asset_uri("", "punycode.bundle.js", "punycode"), "2.1.0");
+  enqueue_script("JSZip", g16_asset_uri("", "jszip.js", "jszip/dist"), "3.1.5");
+  enqueue_script("core-excel", g16_asset_uri("", "core-excel.bundle.js", "core-excel"), "0.1");
   enqueue_script("tally.js", g16_asset_uri("js", "tally.js"));
 }
 add_action("enqueue_scripts", "tally_add_scripts");
