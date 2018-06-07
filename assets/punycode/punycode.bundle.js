@@ -16,7 +16,7 @@ window.punycode.toUnicode = function(string)
 },{"punycode":2}],2:[function(require,module,exports){
 (function (global){
 /*! https://mths.be/punycode v1.4.1 by @mathias */
-;(function(root) {
+(function(root) {
 
 	/** Detect free variables */
 	var freeExports = typeof exports == 'object' && exports &&
@@ -307,7 +307,7 @@ window.punycode.toUnicode = function(string)
 				}
 
 				i += digit * w;
-				t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
+				t = k <= bias ? tMin : k >= bias + tMax ? tMax : k - bias;
 
 				if (digit < t) {
 					break;
@@ -430,7 +430,7 @@ window.punycode.toUnicode = function(string)
 				if (currentValue == n) {
 					// Represent delta as a generalized variable-length integer
 					for (q = delta, k = base; /* no condition */; k += base) {
-						t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
+						t = k <= bias ? tMin : k >= bias + tMax ? tMax : k - bias;
 						if (q < t) {
 							break;
 						}
@@ -539,7 +539,7 @@ window.punycode.toUnicode = function(string)
 		} else {
 			// in Narwhal or RingoJS v0.7.0-
 			for (key in punycode) {
-				punycode.hasOwnProperty(key) && (freeExports[key] = punycode[key]);
+        Object.prototype.hasOwnProperty.call(punycode, key) && (freeExports[key] = punycode[key]);
 			}
 		}
 	} else {

@@ -1,8 +1,8 @@
 {
   "parserOptions":
   {
-    "ecmaVersion": 5,
-    "sourceType": "script"
+    "ecmaVersion": 6,
+    "sourceType": "module"
   },
   "env":
   {
@@ -28,7 +28,7 @@
     "no-empty-character-class": "error",
     "no-ex-assign": "error",
     "no-extra-boolean-cast": "error",
-    "no-extra-parens": ["error", "all", {"nestedBinaryExpressions": false}],
+    "no-extra-parens": ["error", "all", {"nestedBinaryExpressions": false, "returnAssign": false}],
     "no-extra-semi": "error",
     "no-func-assign": "error",
     "no-inner-declarations": ["error", "functions"],
