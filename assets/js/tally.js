@@ -165,13 +165,14 @@
   // @param   string    title     The title of the dialog.
   // @param   string    bodyEl    The HTML string of the dialog body.
   // @param   string    footerEl  The HTML string of the dialog footer.
-  function tally_modal_createUI(title, bodyEl, footerEl = null)
+  function tally_modal_createUI(title, bodyEl, footerEl)
   {
     var ret = "<header class=\"header\">"
             + "<div class=\"title\">" + title + "</div>"
             + "</header>"
             + "<div class=\"body\">" + bodyEl + "</div>";
-    if(footerEl != null)
+
+    if(typeof footerEl != "undefined")
       ret += "<footer class=\"footer\">" + footerEl + "</footer>";
 
     $("#modal-dialog").html(ret);
@@ -251,7 +252,7 @@
       obj.list.push(item);
     });
 
-    return (obj.list.length > 0) ? JSON.stringify(obj) : "";
+    return obj.list.length > 0 ? JSON.stringify(obj) : "";
   }
 
   // Gets the list in CSV
@@ -442,7 +443,7 @@
     };
 
     var b64 = tally_get_list_base64(),
-        uri = (b64 != "") ? b64 : "/";
+        uri = b64 != "" ? b64 : "/";
 
     history.replaceState(state, "", uri);
   }
@@ -515,7 +516,7 @@
     {
       "max-height": $(window).outerHeight()
           - $(".app-header").outerHeight(true)
-          - (($(".app-body").find("h1.name").length > 0) ?
+          - ($(".app-body").find("h1.name").length > 0 ?
               $(".app-body h1.name").outerHeight(true) : 0)
           - $(".app-body .tally-input").outerHeight(true)
           - $(".app-body .tally-list .ui.top").outerHeight(true)
