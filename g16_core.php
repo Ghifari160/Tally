@@ -37,6 +37,65 @@ $g16_actions_array = array();
 $g16_scripts_array = array();
 $g16_styles_array = array();
 
+// =====================
+// = BEGIN TALLY PATCH =
+// =====================
+
+class SUCCESS
+{
+  public $module;
+
+  function __construct($module = "core")
+  {
+    $this->module = $module;
+  }
+}
+
+class ERROR
+{
+  const MODULE_NOT_LOADED = 0x01;
+  const CALL_TO_UNLOADED_MODULE = 0x02;
+  const MODULE_DBOPS_SQL_ERROR = 0xD0;
+
+  public $error_code;
+  public $error_message;
+  public $module;
+  public $attached_errors;
+
+  function __construct($error_code, $module = "core", $attached_errors = array())
+  {
+    $this->error_code = $error_code;
+    $this->error_message = $this->__get_error_message($error_code);
+    $this->module = $module;
+
+    if(count($attached_errors) > 0)
+      $this->attached_errors = $attached_errors;
+    else
+      $this->attached_errors = array();
+  }
+
+  function __get_error_message($code)
+  {
+    switch($code)
+    {
+      case ERROR::MODULE_NOT_LOADED:
+        return "Module not loaded.";
+        break;
+
+      case ERROR::CALL_TO_UNLOADED_MODULE:
+        return "Call to unloaded module. Check previous errors.";
+        break;
+
+      default:
+        return NULL;
+    }
+  }
+}
+
+// =====================
+// =  END TALLY PATCH  =
+// =====================
+
 // Compares two different version strings
 // @param     string    $ver1         Version string #1.
 // @param     string    $ver2         Version string #2.
@@ -761,8 +820,15 @@ function g16_create_dbConn(&$conn)
   if(!OPT_USE_DATABASE)
   {
     // Create a dummy class for error checking
-    $conn = new stdClass();
-    $conn->connect_error = "Database connection is not enabled.";
+    // =====================
+    // = BEGIN TALLY PATCH =
+    // =====================
+    // $conn = new stdClass();
+    $conn = new ERROR(ERROR::MODULE_NOT_LOADED, "core-dbops");
+    // = - = $conn->connect_error = "Database connection is not enabled.";
+    // =====================
+    // =  END TALLY PATCH  =
+    // =====================
 
     return false;
   }
@@ -776,6 +842,23 @@ function g16_create_dbConn(&$conn)
 
   return true;
 }
+
+// =====================
+// = BEGIN TALLY PATCH =
+// =====================
+
+// Gets absolute table name
+// @param       string      $name       Relative table name.
+// @return      string                  Absolute table name (table name with
+// engine prefix).
+function g16_get_tableName($name)
+{
+  return OPT_DB_TBLPREFIX.$name;
+}
+
+// =====================
+// =  END TALLY PATCH  =
+// =====================
 
 // Creates database table
 // @param         string          $tblName      Table name. It will be appended
