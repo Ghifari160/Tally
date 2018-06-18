@@ -45,13 +45,13 @@ const OPT_SHOW_LICENSE_ON_FOOTER = true;
 // ===================
 
 // Change this to true if you want to use the engine's database module.
-const OPT_USE_DATABASE = false;
+const OPT_USE_DATABASE = true;
 
-const OPT_DB_HOSTNAME   = "localhost";
-const OPT_DB_USERNAME   = "username";
-const OPT_DB_PASSWORD   = "password";
-const OPT_DB_DBNAME     = "g16_engine";
-const OPT_DB_TBLPREFIX  = "g16_engine_";
+const OPT_DB_HOSTNAME   = "mysql";
+const OPT_DB_USERNAME   = "tally";
+const OPT_DB_PASSWORD   = "oIGdmn8vHa40TqBt";
+const OPT_DB_DBNAME     = "tally";
+const OPT_DB_TBLPREFIX  = "tally_";
 
 // =========================
 // = Editable Engine Flags =
