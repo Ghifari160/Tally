@@ -37,6 +37,65 @@ $g16_actions_array = array();
 $g16_scripts_array = array();
 $g16_styles_array = array();
 
+// =====================
+// = BEGIN TALLY PATCH =
+// =====================
+
+class SUCCESS
+{
+  public $module;
+
+  function __construct($module = "core")
+  {
+    $this->module = $module;
+  }
+}
+
+class ERROR
+{
+  const MODULE_NOT_LOADED = 0x01;
+  const CALL_TO_UNLOADED_MODULE = 0x02;
+  const MODULE_DBOPS_SQL_ERROR = 0xD0;
+
+  public $error_code;
+  public $error_message;
+  public $module;
+  public $attached_errors;
+
+  function __construct($error_code, $module = "core", $attached_errors = array())
+  {
+    $this->error_code = $error_code;
+    $this->error_message = $this->__get_error_message($error_code);
+    $this->module = $module;
+
+    if(count($attached_errors) > 0)
+      $this->attached_errors = $attached_errors;
+    else
+      $this->attached_errors = array();
+  }
+
+  function __get_error_message($code)
+  {
+    switch($code)
+    {
+      case ERROR::MODULE_NOT_LOADED:
+        return "Module not loaded.";
+        break;
+
+      case ERROR::CALL_TO_UNLOADED_MODULE:
+        return "Call to unloaded module. Check previous errors.";
+        break;
+
+      default:
+        return NULL;
+    }
+  }
+}
+
+// =====================
+// =  END TALLY PATCH  =
+// =====================
+
 // Compares two different version strings
 // @param     string    $ver1         Version string #1.
 // @param     string    $ver2         Version string #2.
@@ -761,8 +820,15 @@ function g16_create_dbConn(&$conn)
   if(!OPT_USE_DATABASE)
   {
     // Create a dummy class for error checking
-    $conn = new stdClass();
-    $conn->connect_error = "Database connection is not enabled.";
+    // =====================
+    // = BEGIN TALLY PATCH =
+    // =====================
+    // $conn = new stdClass();
+    $conn = new ERROR(ERROR::MODULE_NOT_LOADED, "core-dbops");
+    // = - = $conn->connect_error = "Database connection is not enabled.";
+    // =====================
+    // =  END TALLY PATCH  =
+    // =====================
 
     return false;
   }
@@ -775,5 +841,254 @@ function g16_create_dbConn(&$conn)
     return false;
 
   return true;
+}
+
+// =====================
+// = BEGIN TALLY PATCH =
+// =====================
+
+// Gets absolute table name
+// @param       string      $name       Relative table name.
+// @return      string                  Absolute table name (table name with
+// engine prefix).
+function g16_get_tableName($name)
+{
+  return OPT_DB_TBLPREFIX.$name;
+}
+
+// =====================
+// =  END TALLY PATCH  =
+// =====================
+
+// Creates database table
+// @param         string          $tblName      Table name. It will be appended
+// to the prefix configured on `g16_config.php`.
+// @param         string          $tblObjects   Table objects. Structure:
+// ```
+// [
+//    [
+//      "column" => <column name>,
+//      "type" => <column type>,
+//      "length" => <0=no maximum length|any int maximum>,
+//      "primary" => <true|false>
+//    ]
+// ]
+// ```
+// Example:
+// ```
+// [
+//    [
+//        "column" => "id",
+//        "type" => "varchar",
+//        "length" => 32,
+//        "primary" => true
+//    ],
+//    [
+//        "column" => "user_id",
+//        "type" => "varchar",
+//        "length" => 32,
+//        "primary" => false
+//    ]
+// ]
+// ```
+// @param:opt     class:mysqli    $conn         MySQLi object. If not
+// specified, the object will be created and destroyed during table creation.
+// It is recommended to specify a MySQLi object if using this function in a
+// loop.
+// @return        Array                         Table creation status.
+// Structure:
+// ```
+// [
+//    bool      "status",
+//    int       "errno",
+//    string    "error",
+//    string[]  "error_list"
+// ]
+// ```
+function g16_create_table($tblName, $tblObjects, $engine = NULL, $conn = NULL)
+{
+  // Destruction flag
+  $closeConn = true;
+  // Verify engine availability, replace with INNODB if not available
+  if(($engine == NULL || !g16_isAvailable_dbEngine($engine))
+      && g16_isAvailable_dbEngine("innodb"))
+    $engine = "INNODB";
+  // Create the connection if not specified
+  if($conn == NULL)
+    g16_create_dbConn($conn);
+  // Disable connection destroying flag
+  else
+    $closeConn = false;
+  // SQL query
+  $query = "CREATE TABLE ".$conn->escape_string(OPT_DB_TBLPREFIX.$tblName)
+          ." (\n";
+  for($i = 0; $i < count($tblObjects); $i++)
+  {
+    $tblObj = $tblObjects[$i];
+    // Verify that column and type exists and not empty
+    if(isset($tblObj["column"]) && strlen($tblObj["column"]) > 0
+        && isset($tblObj["type"]) && strlen($tblObj["type"]) > 0)
+    {
+      $query .= "\t".$conn->escape_string($tblObj["column"])." "
+               .strtoupper($tblObj["type"]);
+      // Specify the maximum length of the column if the length key exists and
+      // the value is greater than zero.
+      if(isset($tblObj["length"]) && $tblObj["length"] > 0)
+        $query .= "(".$conn->escape_string($tblObj["length"]).")";
+      // Set primary key if the key exists and the value is true
+      if(isset($tblObj["primary"]) && $tblObj["primary"])
+        $query .= " PRIMARY KEY";
+      $query .= ",\n";
+    }
+  }
+  // Strip the last "," and add a new line
+  $query = substr($query, 0, strlen($query) - 2)."\n";
+  $query .= ") ENGINE = ".$engine;
+  // Execute the query
+  $r = $conn->query($query);
+  // Return stack
+  $ret = array(
+    "status" => $r,
+    "errno" => $conn->errno,
+    "error" => $conn->error,
+    "error_list" => $conn->error_list,
+  );
+  // Destroy flagged connection.
+  if($closeConn)
+    $conn->close();
+  return $ret;
+}
+// Creates database tables
+// @param       Array       $tableObjects       Objects of tables to create.
+// Structure:
+// ```
+// [
+//  [
+//    "name": <table name>,
+//    "engine": <table engine>,
+//    "columns":
+//    [
+//      @ref:func:g16_create_table
+//    ]
+//  ]
+// ]
+// ```
+// Example:
+// ```
+// [
+//  [
+//    "name": "tbl1",
+//    "engine": "innodb",
+//    "columns":
+//    [
+//      [
+//        "column": "id",
+//        "type": "varchar",
+//        "length": 32,
+//        "primary": true
+//      ],
+//      [
+//        "column": "uid",
+//        "type": "text"
+//      ]
+//    ]
+//  ],
+//  [
+//    "name": "tbl2",
+//    "engine": "myisam",
+//    "columns":
+//    [
+//      [
+//        "column": "id",
+//        "type": "varchar",
+//        "length": 32,
+//        "primary": true
+//      ],
+//      [
+//        "column": "uid",
+//        "type": "text"
+//      ]
+//    ]
+//  ]
+// ]
+// ```
+// @return      Array                           Creation status. Structure:
+// ```
+// [
+//  bool      "connection_status",
+//  Array     "table_statuses":
+//  [
+//    string    "table_name",
+//    bool      "status",
+//    int       "errno",
+//    string    "error",
+//    string[]  "error_list"
+//  ]
+// ]
+// ```
+function g16_create_tables($tableObjects)
+{
+  $ret = array();
+  $statuses = array();
+  $conn_status = g16_create_dbConn($conn);
+  $ret = array(
+    "connection_status" => $conn_status
+  );
+  // Exit if connection cannot be made
+  if(!$conn_status)
+    return $ret;
+  // Attempts to create all table
+  for($i = 0; $i < count($tableObjects); $i++)
+  {
+    $tbl = $tableObjects[$i];
+    // Only execute if the table is named
+    if(isset($tbl["name"]) && strlen($tbl["name"]) > 0)
+    {
+      // Set the default engine parameter
+      if(!isset($tbl["engine"]))
+        $eng = NULL;
+      else
+        $eng = $tbl["engine"];
+      // Create the table
+      $stat = g16_create_table($tbl["name"], $tbl["columns"], $eng, $conn);
+      // Add table name to the returned value
+      $stat_ret = array(
+        "table_name" => $tbl["name"],
+        "status" => $stat["status"],
+        "errno" => $stat["errno"],
+        "error" => $stat["error"],
+        "error_list" => $stat["error_list"]
+      );
+      // Store the status to the statuses array
+      array_push($statuses, $stat_ret);
+    }
+  }
+  $ret["table_statuses"] = $statuses;
+  return $ret;
+}
+// Checks database engine availability
+// @param     string      $engine     The engine to check for.
+// @return    bool                    Engine availability
+function g16_isAvailable_dbEngine($engine)
+{
+  $ret = false;
+  // Connect to the database
+  $conn_stat = g16_create_dbConn($conn);
+  if(!$conn_stat)
+    return false;
+  $r = $conn->query("SHOW ENGINES");
+  // Exit if unsuccessful
+  if($r->num_rows <= 0)
+    return false;
+  // Scan for engine
+  while($rows = $r->fetch_assoc())
+  {
+    // If engine exists and supported, flag to return true
+    if(!$ret && strtolower($rows["Engine"]) == strtolower($engine)
+        && (strtolower($rows["Support"]) == "default"
+        || strtolower($rows["Support"]) == "yes"))
+      $ret = true;
+  }
+  return $ret;
 }
 ?>

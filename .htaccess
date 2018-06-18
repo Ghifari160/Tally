@@ -1,0 +1,7 @@
+RewriteEngine on
+RewriteRule ^assets/(.*)$ /assets/$1 [END]
+RewriteRule ^about$ /tally_about.php [END]
+RewriteRule ^reports$ /tally_reports.php [END]
+RewriteRule ^module_test$ /test.php [END]
+RewriteRule ^serv_info$ /phpinfo.php [END]
+RewriteRule ^(.*)$ /tally.php [END]
