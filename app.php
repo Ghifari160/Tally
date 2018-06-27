@@ -1314,4 +1314,180 @@ function tally_select_table($operation, $conn = NULL)
 // ===========================
 // =  END MODULE CORE-DBOPS  =
 // ===========================
+
+// =========================
+// = BEGIN MODULE CORE-IAM =
+// =========================
+
+class CORE_IAM
+{
+  // @ref:CORE_IAM:MODE:ERROR
+  const MODE_ERROR = 0x00;
+  // @ref:CORE_IAM:MODE:SUCCESS
+  const MODE_SUCCESS = 0x01;
+
+  // @param         ref:Tally_User        $input      Created user or input
+  // object.
+  // @param:opt     ref:CORE_IAM:MODE     $mode       Construction mode.
+  function __construct($input, $mode = CORE_IAM::MODE_ERROR, $id = NULL)
+  {
+    if($mode == CORE_IAM::MODE_ERROR)
+    {
+      $this->input_expected = "Tally_User";
+      $this->input_instanceof = get_class($input);
+    }
+    else
+    {
+      $this->id = $id;
+
+      if($input != NULL && $input instanceof Tally_User)
+        $this->user = $input;
+    }
+  }
+}
+
+class CORE_IAM_SUCCESS extends SUCCESS
+{
+  public $core_iam;
+
+  // @param         ref:Tally_User      $user         User object.
+  // @param:opt     string              $module       Execution module.
+  function __construct($user, $id, $module = "core-iam")
+  {
+    parent::__construct($module);
+    $this->core_iam = new CORE_IAM($user, CORE_IAM::MODE_SUCCESS, $id);
+  }
+}
+
+class CORE_IAM_ERROR extends ERROR
+{
+  // @ref:CORE_IAM_ERROR:ERROR:CREATE_USER:INVALID_INPUT
+  const ERROR_CREATE_USER_INVALID_INPUT = 0xD1;
+  // @ref:CORE_IAM_ERROR:ERROR:CREATE_USER:CREATE_EMAILS
+  const ERROR_CREATE_USER_CREATE_EMAILS = 0xD2;
+  // @ref:CORE_IAM_ERROR:ERROR:CREATE_EMAIL
+  const ERROR_CREATE_EMAIL = 0xD3;
+
+  public $core_iam;
+
+  // @param         ref:CORE_IAM_ERROR:ERROR      $error_code         Error
+  // code.
+  // @param         ref:Tally_User                $input              Input
+  // object.
+  // @param:opt     string                        $module             Execution
+  // module.
+  // @param:opt     Array                         $attached_errors    Errors
+  // caused by this execution.
+  function __construct($error_code, $input, $module = "core-iam",
+      $attached_errors = array())
+  {
+    parent::__construct($error_code, $module, $attached_errors);
+    $this->error_message = $this->__get_module_error_message($errir_code);
+    $this->core_iam = new CORE_IAM($input);
+  }
+
+  private function __get_module_error_message($error_code)
+  {
+    switch($error_code)
+    {
+      case CORE_IAM_ERROR::ERROR_CREATE_USER_INVALID_INPUT:
+        return "Failed to create user: invalid input object.";
+        break;
+
+      case CORE_IAM_ERROR::ERROR_CREATE_USER_CREATE_EMAILS:
+        return "Failed to create user: failed to register emails.";
+        break;
+
+      case CORE_IAM_ERROR::ERROR_CREATE_EMAIL:
+        return "Failed to register email.";
+        break;
+    }
+  }
+}
+
+class Tally_User
+{
+  public $id;
+
+  public $name;
+  public $name_first;
+  public $name_middle;
+  public $name_last;
+
+  public $email_primary_id;
+  public $emails;
+
+  // @param       string    $name_first         First name.
+  // @param       string    $name_middle        Middle name(s).
+  // @param       string    $name_last          Last name.
+  // @param       Array     $emails             Array of email addresses.
+  // @param       string    $email_primary_id   ID of primary email address.
+  // @param:opt   string    $id                 ID of user. Default or `RAND`
+  // = generate unique ID.
+  function __construct($name_first, $name_middle, $name_last, $emails,
+      $email_primary_id, $id = "RAND")
+  {
+    // Generate random ID
+    if($id == "RAND")
+      $id = tally_generate_id();
+
+    $this->id = $id;
+
+    // Format default display name
+    $name = $name_first;
+    $name .= (strlen($name_middle) > 0) ? " ".$name_middle." " : " ";
+    $name .= $name_last;
+
+    $this->name = $name;
+    $this->name_first = $name_first;
+    $this->name_middle = $name_middle;
+    $this->name_last = $name_last;
+
+    $this->email_primary_id = $email_primary_id;
+    $this->emails = $emails;
+  }
+
+  // Sets the user's display name
+  // @param     string      $name     Name to set.
+  function set_name_display($name)
+  {
+    $this->name = $name;
+  }
+}
+
+function tally_create_user_email($user_id, $email_address)
+{
+  $ret = new stdClass;
+  $cs = array();
+
+  $id = tally_generate_id();
+
+  $c = new CORE_DBOPS_COLUMN("id", "varchar", $id, 32, true);
+  array_push($cs, $c);
+
+  $c = new CORE_DBOPS_COLUMN("user_id", "varchar", $user_id, 32);
+  array_push($cs, $c);
+
+  $c = new CORE_DBOPS_COLUMN("email_address", "text", $email_address);
+  array_push($cs, $c);
+
+  $op = new CORE_DBOPS_OPERATION(OPT_DB_TBLPREFIX."emails", $cs,
+      CORE_DBOPS_OPERATION::MODE_INSERT);
+
+  $stat = tally_dbops_execute($op);
+
+  if($stat instanceof ERROR)
+  {
+    $ret = new CORE_IAM_ERROR(CORE_IAM_ERROR::ERROR_CREATE_EMAIL, NULL,
+        "core-iam", array($stat));
+  }
+  else
+    $ret = new CORE_IAM_SUCCESS(NULL, $id);
+
+  return $ret;
+}
+
+// =========================
+// =  END MODULE CORE-IAM  =
+// =========================
 ?>
