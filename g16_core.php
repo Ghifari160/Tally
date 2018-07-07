@@ -847,7 +847,7 @@ function g16_create_dbConn(&$conn)
 // = BEGIN TALLY PATCH =
 // =====================
 
-class ERROR_ENGINE_DBOPS
+class ERROR_ENGINE_DBOPS extends ERROR
 {
   const ERROR_NOT_ENABLED = 0xFF;
   function __construct($error_code, $module = "engine-dbops",
