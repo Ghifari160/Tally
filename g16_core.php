@@ -847,6 +847,27 @@ function g16_create_dbConn(&$conn)
 // = BEGIN TALLY PATCH =
 // =====================
 
+class ERROR_ENGINE_DBOPS extends ERROR
+{
+  const ERROR_NOT_ENABLED = 0xFF;
+  function __construct($error_code, $module = "engine-dbops",
+      $attached_errors = array())
+  {
+    parent::__construct($error_code, $module, $attached_errors);
+    $this->error_message = $this->__get_module_error_message($error_code);
+  }
+
+  function __get_module_error_message($error_code)
+  {
+    switch($error_code)
+    {
+      case ERROR_ENGINE_DBOPS::ERROR_NOT_ENABLED:
+        return "Engine module not enabled. Use core-dbops instead.";
+        break;
+    }
+  }
+}
+
 // Gets absolute table name
 // @param       string      $name       Relative table name.
 // @return      string                  Absolute table name (table name with
@@ -907,6 +928,17 @@ function g16_get_tableName($name)
 // ```
 function g16_create_table($tblName, $tblObjects, $engine = NULL, $conn = NULL)
 {
+  // =====================
+  // = BEGIN TALLY PATCH =
+  // =====================
+  if(OPT_USE_DATABASE)
+  {
+    $objRet = new ERROR_ENGINE_DBOPS(ERROR_ENGINE_DBOPS::ERROR_NOT_ENABLED);
+    return $objRet;
+  }
+  // =====================
+  // =  END TALLY PATCH  =
+  // =====================
   // Destruction flag
   $closeConn = true;
   // Verify engine availability, replace with INNODB if not available
@@ -1028,6 +1060,17 @@ function g16_create_table($tblName, $tblObjects, $engine = NULL, $conn = NULL)
 // ```
 function g16_create_tables($tableObjects)
 {
+  // =====================
+  // = BEGIN TALLY PATCH =
+  // =====================
+  if(OPT_USE_DATABASE)
+  {
+    $objRet = new ERROR_ENGINE_DBOPS(ERROR_ENGINE_DBOPS::ERROR_NOT_ENABLED);
+    return $objRet;
+  }
+  // =====================
+  // =  END TALLY PATCH  =
+  // =====================
   $ret = array();
   $statuses = array();
   $conn_status = g16_create_dbConn($conn);
