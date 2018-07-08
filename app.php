@@ -1369,6 +1369,16 @@ class CORE_IAM_ERROR extends ERROR
   const ERROR_CREATE_USER_DBOPS = 0xD3;
   // @ref:CORE_IAM_ERROR:ERROR:CREATE_EMAIL
   const ERROR_CREATE_EMAIL = 0xD4;
+  // @ref:CORE_IAM_ERROR:ERROR:GET_EMAIL
+  const ERROR_GET_EMAIL = 0xD5;
+  // @ref:CORE_IAM_ERROR:ERROR:GET_EMAILS
+  const ERROR_GET_EMAILS = 0xD6;
+  // @ref:CORE_IAM_ERROR:ERROR:GET_USER:DBOPS
+  const ERROR_GET_USER_DBOPS = 0xD7;
+  // @ref:CORE_IAM_ERROR:ERROR:GET_USER:GET_EMAILS
+  const ERROR_GET_USER_EMAILS = 0xD8;
+  // @ref:CORE_IAM_ERROR:ERROR:INVALID_INPUT
+  const ERROR_INVALID_INPUT = 0xD9;
 
   public $core_iam;
 
@@ -1406,6 +1416,26 @@ class CORE_IAM_ERROR extends ERROR
 
       case CORE_IAM_ERROR::ERROR_CREATE_EMAIL:
         return "Failed to register email.";
+        break;
+
+      case CORE_IAM_ERROR::ERROR_GET_EMAIL:
+        return "Failed to lookup email.";
+        break;
+
+      case CORE_IAM_ERROR::ERROR_GET_EMAILS:
+        return "Failed to lookup user emails.";
+        break;
+
+      case CORE_IAM_ERROR::ERROR_GET_USER_DBOPS:
+        return "Failed to get user: DBOps error.";
+        break;
+
+      case CORE_IAM_ERROR::ERROR_GET_USER_EMAILS:
+        return "Failed to get user: failed to lookup user emails.";
+        break;
+
+      case CORE_IAM_ERROR::ERROR_INVALID_INPUT:
+        return "Invalid input object.";
         break;
     }
   }
@@ -1562,6 +1592,9 @@ function tally_create_user_account($user)
   $c = new CORE_DBOPS_COLUMN("name_last", "text", $user->name_last);
   array_push($cs, $c);
 
+  $c = new CORE_DBOPS_COLUMN("email_primary_id", "varchar", $email_primary_id);
+  array_push($cs, $c);
+
   $op = new CORE_DBOPS_OPERATION(OPT_DB_TBLPREFIX."users", $cs,
       CORE_DBOPS_OPERATION::MODE_INSERT);
 
@@ -1578,6 +1611,150 @@ function tally_create_user_account($user)
   {
     $user->email_primary_id = $email_primary_id;
     $ret = new CORE_IAM_SUCCESS($user, $user->id);
+  }
+
+  return $ret;
+}
+
+// Gets email address
+// @param     string              $email_id   ID of the email to look up.
+// @return:1  ref:CORE_IAM_ERROR              Error object.
+// @return:2  string                          Email address.
+function tally_get_user_email($email_id)
+{
+  $ret = new stdClass;
+
+  // Build DBOps instruction object
+  $cs = array();
+
+  $c = new CORE_DBOPS_COLUMN("id", "varchar", $email_id, 32, true, true);
+  array_push($cs, $c);
+
+  $c = new CORE_DBOPS_COLUMN("email_address", "text", "");
+  array_push($cs, $c);
+
+  $op = new CORE_DBOPS_OPERATION(OPT_DB_TBLPREFIX."emails", $cs,
+      CORE_DBOPS_OPERATION::MODE_SELECT);
+
+  // Execute DBOps instruction
+  $stat = tally_dbops_execute($op);
+
+  if($stat instanceof ERROR)
+  {
+    $ret = new CORE_IAM_ERROR(CORE_IAM_ERROR::ERROR_GET_EMAIL, $email_id,
+        "core-iam", array($stat));
+  }
+  else
+  {
+    $result_assoc = $stat->core_dbops->mysqli_result->fetch_assoc();
+    $ret = $result_assoc['email_address'];
+  }
+
+  return $ret;
+}
+
+// Gets user email addresses
+// @param     ref:Tally_User        $user   User object to look up. Valid ID
+// field required.
+// @return:1  ref:CORE_IAM_ERROR            Error object.
+// @return:2  ref:CORE_IAM_SUCCESS          Success object. Tally_User object
+// will contain the supplied user ID and valid email addresses.
+function tally_get_user_emails($user)
+{
+  $ret = new stdClass;
+
+  // Validate input
+  if(!$user instanceof Tally_User || !$user->id || $user->id == NULL)
+  {
+    $ret = new CORE_IAM_ERROR(CORE_IAM_ERROR::ERROR_INVALID_INPUT, $user);
+    return $ret;
+  }
+
+  // Build DBOps instruction object
+  $cs = array();
+
+  $c = new CORE_DBOPS_COLUMN("user_id", "varchar", $user->id, 32, false, true);
+  array_push($cs, $c);
+
+  $c = new CORE_DBOPS_COLUMN("email_address", "text", "");
+  array_push($cs, $c);
+
+  $op = new CORE_DBOPS_OPERATION(OPT_DB_TBLPREFIX."emails", $cs,
+      CORE_DBOPS_OPERATION::MODE_SELECT);
+
+  // Execute DBOps instruction
+  $stat = tally_dbops_execute($op);
+
+  if($stat instanceof ERROR)
+  {
+    $ret = new CORE_IAM_ERROR(CORE_IAM_ERROR::ERROR_GET_EMAILS, $user,
+        "core-iam", array($stat));
+  }
+  else
+  {
+    $result_emails = array();
+
+    // Get email addresses
+    while($result_assoc = $stat->core_dbops->mysqli_result->fetch_assoc())
+      array_push($result_emails, $result_assoc['email_address']);
+
+    $u = $user;
+    $u->emails = $result_emails;
+
+    $ret = new CORE_IAM_SUCCESS($u, $u->id);
+  }
+
+  return $ret;
+}
+
+// Gets user account
+// @param     string                $user_id  User ID to look up for account.
+// @return:1  ref:CORE_IAM_ERROR              Error object.
+// @return:2  ref:CORE_IAM_SUCCESS            Success object. Contains the user
+// object.
+function tally_get_user_account($user_id)
+{
+  $ret = new stdClass;
+
+  // Build DBOps instruction object
+  $cs = array();
+
+  $c = new CORE_DBOPS_COLUMN("id", "varchar", $user_id, 32, true, true);
+  array_push($cs, $c);
+
+  $c = new CORE_DBOPS_COLUMN("name_first", "text");
+  array_push($cs, $c);
+
+  $c = new CORE_DBOPS_COLUMN("name_last", "text");
+  array_push($cs, $c);
+
+  $c = new CORE_DBOPS_COLUMN("email_primary_id", "varchar");
+  array_push($cs, $c);
+
+  $op = new CORE_DBOPS_OPERATION(OPT_DB_TBLPREFIX."users", $cs,
+      CORE_DBOPS_OPERATION::MODE_SELECT);
+
+  // Execute DBOps instruction
+  $stat = tally_dbops_execute($op);
+
+  if($stat instanceof ERROR)
+  {
+    $ret = new CORE_IAM_ERROR(CORE_IAM_ERROR::ERROR_GET_USER_DBOPS, NULL,
+        "core-iam", array($stat));
+
+    return $ret;
+  }
+  else
+  {
+    $result_assoc = $stat->core_dbops->mysqli_result->fetch_assoc();
+
+    // Construct user object
+    $u = new Tally_User($result_assoc['name_first'], "",
+        $result_assoc['name_last'], array(), $result_assoc['email_primary_id'],
+        $user_id);
+
+    // Look up user emails
+    $ret = tally_get_user_emails($u);
   }
 
   return $ret;
