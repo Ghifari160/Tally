@@ -53,6 +53,14 @@ const OPT_DB_PASSWORD   = "oIGdmn8vHa40TqBt";
 const OPT_DB_DBNAME     = "tally";
 const OPT_DB_TBLPREFIX  = "tally_";
 
+// ==============
+// = IAM Module =
+// ==============
+
+// Change this to true if you want to use Tally's IAM module
+const OPT_USE_IAM       = true;
+const OPT_IAM_SYSTEMD   = "qSkqgAwack8owMgAwGKcUcuoYK2ayCs6";
+
 // =========================
 // = Editable Engine Flags =
 // =========================
