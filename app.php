@@ -1133,7 +1133,7 @@ function tally_update_table($operation, $conn = NULL)
       }
       else
       {
-        $ret = new CORE_DBOPS_SUCCESS($operation->operation_mode, $stat, $sql,
+        $ret = new CORE_DBOPS_SUCCESS($operation->operation_mode, $stmt, $sql,
             $inputs);
       }
     }
