@@ -1379,6 +1379,12 @@ class CORE_IAM_ERROR extends ERROR
   const ERROR_GET_USER_EMAILS = 0xD8;
   // @ref:CORE_IAM_ERROR:ERROR:INVALID_INPUT
   const ERROR_INVALID_INPUT = 0xD9;
+  // @ref:CORE_IAM_ERROR:ERROR:CLAIM_LIST:INVALID_USER
+  const ERROR_CLAIM_LIST_INVALID_USER = 0xDA;
+  // @ref:CORE_IAM_ERROR:ERROR:CLAIM_LIST:DBOPS
+  const ERROR_CLAIM_LIST_DBOPS = 0xDB;
+  // @ref:CORE_IAM_ERROR:ERROR:CLAIM_LIST:INVALID_LIST
+  const ERROR_CLAIM_LIST_INVALID_LIST = 0xDC;
 
   public $core_iam;
 
@@ -1394,7 +1400,7 @@ class CORE_IAM_ERROR extends ERROR
       $attached_errors = array())
   {
     parent::__construct($error_code, $module, $attached_errors);
-    $this->error_message = $this->__get_module_error_message($errir_code);
+    $this->error_message = $this->__get_module_error_message($error_code);
     $this->core_iam = new CORE_IAM($input);
   }
 
@@ -1436,6 +1442,18 @@ class CORE_IAM_ERROR extends ERROR
 
       case CORE_IAM_ERROR::ERROR_INVALID_INPUT:
         return "Invalid input object.";
+        break;
+
+      case CORE_IAM_ERROR::ERROR_CLAIM_LIST_INVALID_USER:
+        return "Failed to claim list: invalid user.";
+        break;
+
+      case CORE_IAM_ERROR::ERROR_CLAIM_LIST_DBOPS:
+        return "Failed to claim list: DBOps error.";
+        break;
+
+      case CORE_IAM_ERROR::ERROR_CLAIM_LIST_INVALID_LIST:
+        return "Failed to claim list: invalid list.";
         break;
     }
   }
