@@ -1778,6 +1778,56 @@ function tally_get_user_account($user_id)
   return $ret;
 }
 
+// Claims a list
+// @param     string                $list_id  ID of the list to claim.
+// @param     string                $user_id  ID of the user claiming the list.
+// @return:1  ref:CORE_IAM_ERROR              Error object.
+// @return:2  ref:CORE_IAM_SUCCESS            Success object. Contains the
+// details of the user who claimed the list.
+function tally_claim_list($list_id, $user_id)
+{
+  $ret = new stdClass;
+
+  // Get user info
+  $u = tally_get_user_account($user_id)->core_iam->user;
+
+  if($u instanceof ERROR)
+  {
+    $ret = new CORE_IAM_ERROR(CORE_IAM_ERROR::ERROR_CLAIM_LIST_INVALID_USER);
+
+    return $ret;
+  }
+
+  // Build DBOps instruction object
+  $cs = array();
+
+  $c = new CORE_DBOPS_COLUMN("id", "varchar", $list_id, 32, true, true);
+  array_push($cs, $c);
+
+  $c = new CORE_DBOPS_COLUMN("user_id", "varchar", $user_id);
+  array_push($cs, $c);
+
+  $op = new CORE_DBOPS_OPERATION(OPT_DB_TBLPREFIX."lists", $cs,
+      CORE_DBOPS_OPERATION::MODE_UPDATE);
+
+  // Execute DBOps instruction
+  $stat = tally_dbops_execute($op);
+
+  // Return an error object if DBOps failed
+  if($stat instanceof ERROR)
+  {
+    $ret = new CORE_IAM_ERROR(CORE_IAM_ERROR::ERROR_CLAIM_LIST_DBOPS, NULL,
+        "core-iam", array($stat));
+  }
+  // Return an error object if no rows were affected
+  else if($stat->core_dbops->mysqli_stmt->affected_rows < 1)
+    $ret = new CORE_IAM_ERROR(CORE_IAM_ERROR::ERROR_CLAIM_LIST_INVALID_LIST);
+  else
+    $ret = new CORE_IAM_SUCCESS($u, $u->id);
+
+  return $ret;
+}
+
 // =========================
 // =  END MODULE CORE-IAM  =
 // =========================
