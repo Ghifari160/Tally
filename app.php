@@ -1314,4 +1314,564 @@ function tally_select_table($operation, $conn = NULL)
 // ===========================
 // =  END MODULE CORE-DBOPS  =
 // ===========================
+
+// =========================
+// = BEGIN MODULE CORE-IAM =
+// =========================
+
+class CORE_IAM
+{
+  // @ref:CORE_IAM:MODE:ERROR
+  const MODE_ERROR = 0x00;
+  // @ref:CORE_IAM:MODE:SUCCESS
+  const MODE_SUCCESS = 0x01;
+
+  // @param         ref:Tally_User        $input      Created user or input
+  // object.
+  // @param:opt     ref:CORE_IAM:MODE     $mode       Construction mode.
+  function __construct($input, $mode = CORE_IAM::MODE_ERROR, $id = NULL)
+  {
+    if($mode == CORE_IAM::MODE_ERROR)
+    {
+      $this->input_expected = "Tally_User";
+      $this->input_instanceof = get_class($input);
+    }
+    else
+    {
+      $this->id = $id;
+
+      if($input != NULL && $input instanceof Tally_User)
+        $this->user = $input;
+    }
+  }
+}
+
+class CORE_IAM_SUCCESS extends SUCCESS
+{
+  public $core_iam;
+
+  // @param         ref:Tally_User      $user         User object.
+  // @param:opt     string              $module       Execution module.
+  function __construct($user, $id, $module = "core-iam")
+  {
+    parent::__construct($module);
+    $this->core_iam = new CORE_IAM($user, CORE_IAM::MODE_SUCCESS, $id);
+  }
+}
+
+class CORE_IAM_ERROR extends ERROR
+{
+  // @ref:CORE_IAM_ERROR:ERROR:CREATE_USER:INVALID_INPUT
+  const ERROR_CREATE_USER_INVALID_INPUT = 0xD1;
+  // @ref:CORE_IAM_ERROR:ERROR:CREATE_USER:CREATE_EMAILS
+  const ERROR_CREATE_USER_CREATE_EMAILS = 0xD2;
+  // @ref:CORE_IAM_ERROR:ERROR:CREATE_USER
+  const ERROR_CREATE_USER_DBOPS = 0xD3;
+  // @ref:CORE_IAM_ERROR:ERROR:CREATE_EMAIL
+  const ERROR_CREATE_EMAIL = 0xD4;
+  // @ref:CORE_IAM_ERROR:ERROR:GET_EMAIL
+  const ERROR_GET_EMAIL = 0xD5;
+  // @ref:CORE_IAM_ERROR:ERROR:GET_EMAILS
+  const ERROR_GET_EMAILS = 0xD6;
+  // @ref:CORE_IAM_ERROR:ERROR:GET_USER:DBOPS
+  const ERROR_GET_USER_DBOPS = 0xD7;
+  // @ref:CORE_IAM_ERROR:ERROR:GET_USER:GET_EMAILS
+  const ERROR_GET_USER_EMAILS = 0xD8;
+  // @ref:CORE_IAM_ERROR:ERROR:INVALID_INPUT
+  const ERROR_INVALID_INPUT = 0xD9;
+  // @ref:CORE_IAM_ERROR:ERROR:CLAIM_LIST:INVALID_USER
+  const ERROR_CLAIM_LIST_INVALID_USER = 0xDA;
+  // @ref:CORE_IAM_ERROR:ERROR:CLAIM_LIST:DBOPS
+  const ERROR_CLAIM_LIST_DBOPS = 0xDB;
+  // @ref:CORE_IAM_ERROR:ERROR:CLAIM_LIST:INVALID_LIST
+  const ERROR_CLAIM_LIST_INVALID_LIST = 0xDC;
+
+  public $core_iam;
+
+  // @param         ref:CORE_IAM_ERROR:ERROR      $error_code         Error
+  // code.
+  // @param         ref:Tally_User                $input              Input
+  // object.
+  // @param:opt     string                        $module             Execution
+  // module.
+  // @param:opt     Array                         $attached_errors    Errors
+  // caused by this execution.
+  function __construct($error_code, $input, $module = "core-iam",
+      $attached_errors = array())
+  {
+    parent::__construct($error_code, $module, $attached_errors);
+    $this->error_message = $this->__get_module_error_message($error_code);
+    $this->core_iam = new CORE_IAM($input);
+  }
+
+  private function __get_module_error_message($error_code)
+  {
+    switch($error_code)
+    {
+      case CORE_IAM_ERROR::ERROR_CREATE_USER_INVALID_INPUT:
+        return "Failed to create user: invalid input object.";
+        break;
+
+      case CORE_IAM_ERROR::ERROR_CREATE_USER_CREATE_EMAILS:
+        return "Failed to create user: failed to register emails.";
+        break;
+
+      case CORE_IAM_ERROR::ERROR_CREATE_USER_DBOPS:
+        return "Failed to create user: DBOps error.";
+        break;
+
+      case CORE_IAM_ERROR::ERROR_CREATE_EMAIL:
+        return "Failed to register email.";
+        break;
+
+      case CORE_IAM_ERROR::ERROR_GET_EMAIL:
+        return "Failed to lookup email.";
+        break;
+
+      case CORE_IAM_ERROR::ERROR_GET_EMAILS:
+        return "Failed to lookup user emails.";
+        break;
+
+      case CORE_IAM_ERROR::ERROR_GET_USER_DBOPS:
+        return "Failed to get user: DBOps error.";
+        break;
+
+      case CORE_IAM_ERROR::ERROR_GET_USER_EMAILS:
+        return "Failed to get user: failed to lookup user emails.";
+        break;
+
+      case CORE_IAM_ERROR::ERROR_INVALID_INPUT:
+        return "Invalid input object.";
+        break;
+
+      case CORE_IAM_ERROR::ERROR_CLAIM_LIST_INVALID_USER:
+        return "Failed to claim list: invalid user.";
+        break;
+
+      case CORE_IAM_ERROR::ERROR_CLAIM_LIST_DBOPS:
+        return "Failed to claim list: DBOps error.";
+        break;
+
+      case CORE_IAM_ERROR::ERROR_CLAIM_LIST_INVALID_LIST:
+        return "Failed to claim list: invalid list.";
+        break;
+    }
+  }
+}
+
+class Tally_User
+{
+  public $id;
+
+  public $name;
+  public $name_first;
+  public $name_middle;
+  public $name_last;
+
+  public $email_primary_id;
+  public $emails;
+
+  // @param       string    $name_first         First name.
+  // @param       string    $name_middle        Middle name(s).
+  // @param       string    $name_last          Last name.
+  // @param       Array     $emails             Array of email addresses.
+  // @param       string    $email_primary_id   ID of primary email address.
+  // @param:opt   string    $id                 ID of user. Default or `RAND`
+  // = generate unique ID.
+  function __construct($name_first, $name_middle, $name_last, $emails,
+      $email_primary_id, $id = "RAND")
+  {
+    // Generate random ID
+    if($id == "RAND")
+      $id = tally_generate_id();
+
+    $this->id = $id;
+
+    // Format default display name
+    $name = $name_first;
+    $name .= (strlen($name_middle) > 0) ? " ".$name_middle." " : " ";
+    $name .= $name_last;
+
+    $this->name = $name;
+    $this->name_first = $name_first;
+    $this->name_middle = $name_middle;
+    $this->name_last = $name_last;
+
+    $this->email_primary_id = $email_primary_id;
+    $this->emails = $emails;
+  }
+
+  // Sets the user's display name
+  // @param     string      $name     Name to set.
+  function set_name_display($name)
+  {
+    $this->name = $name;
+  }
+}
+
+// Registers user email address
+// @param     string                  $user_id          ID of the user.
+// @param     string                  $email_address    Email address to
+// register.
+// @return:1  ref:CORE_IAM_ERROR                        Error object.
+// @return:2  ref:CORE_IAM_SUCCESS                      Success object.
+function tally_create_user_email($user_id, $email_address)
+{
+  $ret = new stdClass;
+
+  // core-iam toggle switch
+  if(!OPT_USE_IAM)
+  {
+    $ret = new ERROR(ERROR::MODULE_NOT_LOADED, "core-iam");
+    return $ret;
+  }
+
+  $cs = array();
+
+  $id = tally_generate_id();
+
+  $c = new CORE_DBOPS_COLUMN("id", "varchar", $id, 32, true);
+  array_push($cs, $c);
+
+  $c = new CORE_DBOPS_COLUMN("user_id", "varchar", $user_id, 32);
+  array_push($cs, $c);
+
+  $c = new CORE_DBOPS_COLUMN("email_address", "text", $email_address);
+  array_push($cs, $c);
+
+  $op = new CORE_DBOPS_OPERATION(OPT_DB_TBLPREFIX."emails", $cs,
+      CORE_DBOPS_OPERATION::MODE_INSERT);
+
+  $stat = tally_dbops_execute($op);
+
+  if($stat instanceof ERROR)
+  {
+    $ret = new CORE_IAM_ERROR(CORE_IAM_ERROR::ERROR_CREATE_EMAIL, NULL,
+        "core-iam", array($stat));
+  }
+  else
+    $ret = new CORE_IAM_SUCCESS(NULL, $id);
+
+  return $ret;
+}
+
+// Creates user account
+// @param       ref:Tally_User          $user   Object of the user to register.
+// @return:1    ref:CORE_IAM_ERROR              Error object.
+// @return:2    ref:CORE_IAM_SUCCESS            Success object.
+function tally_create_user_account($user)
+{
+  $ret = new stdClass;
+
+  // core-iam toggle switch
+  if(!OPT_USE_IAM)
+  {
+    $ret = new ERROR(ERROR::MODULE_NOT_LOADED, "core-iam");
+    return $ret;
+  }
+
+  // Validate user object
+  if(!$user instanceof Tally_User || !$user->id | $user->id == NULL
+      || !$user->name_first || $user->name_first == NULL || !$user->name_last
+      || $user->name_last == NULL || !$user->emails || count($user->emails) < 1)
+  {
+    $ret = new CORE_IAM_ERROR(CORE_IAM_ERROR::ERROR_CREATE_USER_INVALID_INPUT,
+        $user);
+
+    return $ret;
+  }
+
+  // Register user emails
+  if(!$user->email_primary_id || $user->email_primary_id == NULL)
+    $email_primary_id = 0;
+  else
+    $email_primary_id = $user->email_primary_id;
+
+  $email_reg_errorIndices = array();
+  $email_reg_errors = array();
+
+  for($i = 0; $i < count($user->emails); $i++)
+  {
+    $e = tally_create_user_email($user->id, $user->emails[$i]);
+
+    if($e instanceof ERROR)
+    {
+      array_push($email_reg_errorIndices, $i);
+      array_push($email_reg_errors, $e);
+    }
+    // Store primary email ID
+    else if($email_primary_id == $i)
+      $email_primary_id = $e->core_iam->id;
+  }
+
+  // Exit if email registrations failed
+  if(count($email_reg_errors) > 0)
+  {
+    $ret = new CORE_IAM_ERROR(CORE_IAM_ERROR::ERROR_CREATE_USER_CREATE_EMAILS,
+        $user, "core-iam", $email_reg_errors);
+
+    return $ret;
+  }
+
+  // Construct DBOps operation object
+  $cs = array();
+
+  $c = new CORE_DBOPS_COLUMN("id", "varchar", $user->id, 32, true);
+  array_push($cs, $c);
+
+  $c = new CORE_DBOPS_COLUMN("name_first", "text", $user->name_first);
+  array_push($cs, $c);
+
+  $c = new CORE_DBOPS_COLUMN("name_last", "text", $user->name_last);
+  array_push($cs, $c);
+
+  $c = new CORE_DBOPS_COLUMN("email_primary_id", "varchar", $email_primary_id);
+  array_push($cs, $c);
+
+  $op = new CORE_DBOPS_OPERATION(OPT_DB_TBLPREFIX."users", $cs,
+      CORE_DBOPS_OPERATION::MODE_INSERT);
+
+  // Execute DBOps
+  $stat = tally_dbops_execute($op);
+
+  // Exit if failed to execute DBOps
+  if($stat instanceof ERROR)
+  {
+    $ret = new CORE_IAM_ERROR(CORE_IAM_ERROR::ERROR_CREATE_USER_DBOPS, $user,
+        "core-iam", array($stat));
+  }
+  else
+  {
+    $user->email_primary_id = $email_primary_id;
+    $ret = new CORE_IAM_SUCCESS($user, $user->id);
+  }
+
+  return $ret;
+}
+
+// Gets email address
+// @param     string              $email_id   ID of the email to look up.
+// @return:1  ref:CORE_IAM_ERROR              Error object.
+// @return:2  string                          Email address.
+function tally_get_user_email($email_id)
+{
+  $ret = new stdClass;
+
+  // core-iam toggle switch
+  if(!OPT_USE_IAM)
+  {
+    $ret = new ERROR(ERROR::MODULE_NOT_LOADED, "core-iam");
+    return $ret;
+  }
+
+  // Build DBOps instruction object
+  $cs = array();
+
+  $c = new CORE_DBOPS_COLUMN("id", "varchar", $email_id, 32, true, true);
+  array_push($cs, $c);
+
+  $c = new CORE_DBOPS_COLUMN("email_address", "text", "");
+  array_push($cs, $c);
+
+  $op = new CORE_DBOPS_OPERATION(OPT_DB_TBLPREFIX."emails", $cs,
+      CORE_DBOPS_OPERATION::MODE_SELECT);
+
+  // Execute DBOps instruction
+  $stat = tally_dbops_execute($op);
+
+  if($stat instanceof ERROR)
+  {
+    $ret = new CORE_IAM_ERROR(CORE_IAM_ERROR::ERROR_GET_EMAIL, $email_id,
+        "core-iam", array($stat));
+  }
+  else
+  {
+    $result_assoc = $stat->core_dbops->mysqli_result->fetch_assoc();
+    $ret = $result_assoc['email_address'];
+  }
+
+  return $ret;
+}
+
+// Gets user email addresses
+// @param     ref:Tally_User        $user   User object to look up. Valid ID
+// field required.
+// @return:1  ref:CORE_IAM_ERROR            Error object.
+// @return:2  ref:CORE_IAM_SUCCESS          Success object. Tally_User object
+// will contain the supplied user ID and valid email addresses.
+function tally_get_user_emails($user)
+{
+  $ret = new stdClass;
+
+  // core-iam toggle switch
+  if(!OPT_USE_IAM)
+  {
+    $ret = new ERROR(ERROR::MODULE_NOT_LOADED, "core-iam");
+    return $ret;
+  }
+
+  // Validate input
+  if(!$user instanceof Tally_User || !$user->id || $user->id == NULL)
+  {
+    $ret = new CORE_IAM_ERROR(CORE_IAM_ERROR::ERROR_INVALID_INPUT, $user);
+    return $ret;
+  }
+
+  // Build DBOps instruction object
+  $cs = array();
+
+  $c = new CORE_DBOPS_COLUMN("user_id", "varchar", $user->id, 32, false, true);
+  array_push($cs, $c);
+
+  $c = new CORE_DBOPS_COLUMN("email_address", "text", "");
+  array_push($cs, $c);
+
+  $op = new CORE_DBOPS_OPERATION(OPT_DB_TBLPREFIX."emails", $cs,
+      CORE_DBOPS_OPERATION::MODE_SELECT);
+
+  // Execute DBOps instruction
+  $stat = tally_dbops_execute($op);
+
+  if($stat instanceof ERROR)
+  {
+    $ret = new CORE_IAM_ERROR(CORE_IAM_ERROR::ERROR_GET_EMAILS, $user,
+        "core-iam", array($stat));
+  }
+  else
+  {
+    $result_emails = array();
+
+    // Get email addresses
+    while($result_assoc = $stat->core_dbops->mysqli_result->fetch_assoc())
+      array_push($result_emails, $result_assoc['email_address']);
+
+    $u = $user;
+    $u->emails = $result_emails;
+
+    $ret = new CORE_IAM_SUCCESS($u, $u->id);
+  }
+
+  return $ret;
+}
+
+// Gets user account
+// @param     string                $user_id  User ID to look up for account.
+// @return:1  ref:CORE_IAM_ERROR              Error object.
+// @return:2  ref:CORE_IAM_SUCCESS            Success object. Contains the user
+// object.
+function tally_get_user_account($user_id)
+{
+  $ret = new stdClass;
+
+  // core-iam toggle switch
+  if(!OPT_USE_IAM)
+  {
+    $ret = new ERROR(ERROR::MODULE_NOT_LOADED, "core-iam");
+    return $ret;
+  }
+
+  // Build DBOps instruction object
+  $cs = array();
+
+  $c = new CORE_DBOPS_COLUMN("id", "varchar", $user_id, 32, true, true);
+  array_push($cs, $c);
+
+  $c = new CORE_DBOPS_COLUMN("name_first", "text");
+  array_push($cs, $c);
+
+  $c = new CORE_DBOPS_COLUMN("name_last", "text");
+  array_push($cs, $c);
+
+  $c = new CORE_DBOPS_COLUMN("email_primary_id", "varchar");
+  array_push($cs, $c);
+
+  $op = new CORE_DBOPS_OPERATION(OPT_DB_TBLPREFIX."users", $cs,
+      CORE_DBOPS_OPERATION::MODE_SELECT);
+
+  // Execute DBOps instruction
+  $stat = tally_dbops_execute($op);
+
+  if($stat instanceof ERROR)
+  {
+    $ret = new CORE_IAM_ERROR(CORE_IAM_ERROR::ERROR_GET_USER_DBOPS, NULL,
+        "core-iam", array($stat));
+
+    return $ret;
+  }
+  else
+  {
+    $result_assoc = $stat->core_dbops->mysqli_result->fetch_assoc();
+
+    // Construct user object
+    $u = new Tally_User($result_assoc['name_first'], "",
+        $result_assoc['name_last'], array(), $result_assoc['email_primary_id'],
+        $user_id);
+
+    // Look up user emails
+    $ret = tally_get_user_emails($u);
+  }
+
+  return $ret;
+}
+
+// Claims a list
+// @param     string                $list_id  ID of the list to claim.
+// @param     string                $user_id  ID of the user claiming the list.
+// @return:1  ref:CORE_IAM_ERROR              Error object.
+// @return:2  ref:CORE_IAM_SUCCESS            Success object. Contains the
+// details of the user who claimed the list.
+function tally_claim_list($list_id, $user_id)
+{
+  $ret = new stdClass;
+
+  // core-iam toggle switch
+  if(!OPT_USE_IAM)
+  {
+    $ret = new ERROR(ERROR::MODULE_NOT_LOADED, "core-iam");
+    return $ret;
+  }
+
+  // Get user info
+  $u = tally_get_user_account($user_id)->core_iam->user;
+
+  if($u instanceof ERROR)
+  {
+    $ret = new CORE_IAM_ERROR(CORE_IAM_ERROR::ERROR_CLAIM_LIST_INVALID_USER);
+
+    return $ret;
+  }
+
+  // Build DBOps instruction object
+  $cs = array();
+
+  $c = new CORE_DBOPS_COLUMN("id", "varchar", $list_id, 32, true, true);
+  array_push($cs, $c);
+
+  $c = new CORE_DBOPS_COLUMN("user_id", "varchar", $user_id);
+  array_push($cs, $c);
+
+  $op = new CORE_DBOPS_OPERATION(OPT_DB_TBLPREFIX."lists", $cs,
+      CORE_DBOPS_OPERATION::MODE_UPDATE);
+
+  // Execute DBOps instruction
+  $stat = tally_dbops_execute($op);
+
+  // Return an error object if DBOps failed
+  if($stat instanceof ERROR)
+  {
+    $ret = new CORE_IAM_ERROR(CORE_IAM_ERROR::ERROR_CLAIM_LIST_DBOPS, NULL,
+        "core-iam", array($stat));
+  }
+  // Return an error object if no rows were affected
+  else if($stat->core_dbops->mysqli_stmt->affected_rows < 1)
+    $ret = new CORE_IAM_ERROR(CORE_IAM_ERROR::ERROR_CLAIM_LIST_INVALID_LIST);
+  else
+    $ret = new CORE_IAM_SUCCESS($u, $u->id);
+
+  return $ret;
+}
+
+// =========================
+// =  END MODULE CORE-IAM  =
+// =========================
 ?>
