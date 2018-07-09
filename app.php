@@ -1518,6 +1518,14 @@ class Tally_User
 function tally_create_user_email($user_id, $email_address)
 {
   $ret = new stdClass;
+
+  // core-iam toggle switch
+  if(!OPT_USE_IAM)
+  {
+    $ret = new ERROR(ERROR::MODULE_NOT_LOADED, "core-iam");
+    return $ret;
+  }
+
   $cs = array();
 
   $id = tally_generate_id();
@@ -1554,6 +1562,13 @@ function tally_create_user_email($user_id, $email_address)
 function tally_create_user_account($user)
 {
   $ret = new stdClass;
+
+  // core-iam toggle switch
+  if(!OPT_USE_IAM)
+  {
+    $ret = new ERROR(ERROR::MODULE_NOT_LOADED, "core-iam");
+    return $ret;
+  }
 
   // Validate user object
   if(!$user instanceof Tally_User || !$user->id | $user->id == NULL
@@ -1642,6 +1657,13 @@ function tally_get_user_email($email_id)
 {
   $ret = new stdClass;
 
+  // core-iam toggle switch
+  if(!OPT_USE_IAM)
+  {
+    $ret = new ERROR(ERROR::MODULE_NOT_LOADED, "core-iam");
+    return $ret;
+  }
+
   // Build DBOps instruction object
   $cs = array();
 
@@ -1680,6 +1702,13 @@ function tally_get_user_email($email_id)
 function tally_get_user_emails($user)
 {
   $ret = new stdClass;
+
+  // core-iam toggle switch
+  if(!OPT_USE_IAM)
+  {
+    $ret = new ERROR(ERROR::MODULE_NOT_LOADED, "core-iam");
+    return $ret;
+  }
 
   // Validate input
   if(!$user instanceof Tally_User || !$user->id || $user->id == NULL)
@@ -1734,6 +1763,13 @@ function tally_get_user_account($user_id)
 {
   $ret = new stdClass;
 
+  // core-iam toggle switch
+  if(!OPT_USE_IAM)
+  {
+    $ret = new ERROR(ERROR::MODULE_NOT_LOADED, "core-iam");
+    return $ret;
+  }
+
   // Build DBOps instruction object
   $cs = array();
 
@@ -1787,6 +1823,13 @@ function tally_get_user_account($user_id)
 function tally_claim_list($list_id, $user_id)
 {
   $ret = new stdClass;
+
+  // core-iam toggle switch
+  if(!OPT_USE_IAM)
+  {
+    $ret = new ERROR(ERROR::MODULE_NOT_LOADED, "core-iam");
+    return $ret;
+  }
 
   // Get user info
   $u = tally_get_user_account($user_id)->core_iam->user;
