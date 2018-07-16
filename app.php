@@ -21,20 +21,26 @@ function tally_add_scripts()
 }
 add_action("enqueue_scripts", "tally_add_scripts");
 
-$footerMenu_options = array(
-  array(
-    "text" => "Home",
-    "uri" => "/"
-  ),
-  array(
-    "text" => "About",
-    "uri" => "/about"
-  )
-  // array(
-  //   "text" => "Report Bugs",
-  //   "uri" => "/reports"
-  // )
-);
+$footerMenu_options = array();
+
+// Enqueues footer menu item
+// @param   string    $text   Menu text.
+// @param   string    $uri    Target URI.
+function tally_enqueue_footer_menu($text, $uri)
+{
+  global $footerMenu_options;
+
+  $menu = array(
+    "text" => $text,
+    "uri" => $uri
+  );
+
+  array_push($footerMenu_options, $menu);
+}
+
+tally_enqueue_footer_menu("Home", "/");
+tally_enqueue_footer_menu("About", "/about");
+// tally_enqueue_footer_menu("Report Bugs", "/reports");
 
 function tally_footer_menu()
 {
