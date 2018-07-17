@@ -897,11 +897,24 @@
     });
 
     // Handle options UI
-    $("body").on("focusout", "#modal-dialog .body .container .opt input",
+    $("body").on("focusout click", "#modal-dialog .body .container .opt input",
     function(e)
     {
+      var val = "";
+
+      // Set val as the check status if input is checkbox or radio
+      if($(this).attr("type") == "checkbox" || $(this).attr("type") == "radio")
+        val = $(this).is(":checked")
+      // Exit the handler if the input is not a checkbox or radio and the event
+      // type is click
+      else if(e.type == "click")
+        return;
+      // Set val as the value of this input
+      else
+        val = $(this).val();
+
       tally_menu_callback_options($(this).parent().attr("class"),
-          $(this).val());
+          val);
 
       tally_body_resize();
       tally_update_instanceURI();
