@@ -524,6 +524,135 @@
     });
   }
 
+  window._tally = {};
+
+  var tally_menu_options = [],
+      tally_menu_export = [];
+
+  // Enqueue options menu item
+  // @param   string      label                   Label of the config field.
+  // @param   string      type                    Input element type.
+  // @param   string      placeholder             Place holder text for the
+  // input element.
+  // @param   string      domClass                DOM class of the menu item.
+  // `opt` will be prepended.
+  // @param   ref:func    callback                Callback function of the menu
+  // item. Options menu callback is called on loss of focus of the item.
+  // @param   string      prefill_propertyName    Property name of the
+  // ref:options object, which will be used to prefill the input element of this
+  // item.
+  function tally_enqueue_menu_options(label, type, placeholder, domClass,
+      callback, prefill_propertyName)
+  {
+    var menu = {};
+    menu.label = label;
+    menu.type = type;
+    menu.placeholder = placeholder;
+    menu.domClass = "opt " + domClass;
+    menu.callback = callback;
+    menu.prefill_propertyName = prefill_propertyName;
+
+    tally_menu_options.push(menu);
+  }
+
+  // Enqueues export menu item
+  // @param   string      label       Menu item label.
+  // @param   string      domClass    DOM class of the menu item.
+  // @param   ref:func    callback    Callback of the menu item. This is
+  // called when the item is clicked.
+  function tally_enqueue_menu_export(label, domClass, callback)
+  {
+    var menu = {};
+    menu.label = label;
+    menu.domClass = "btn " + domClass;
+    menu.callback = callback;
+
+    tally_menu_export.push(menu);
+  }
+
+  // Get options menu items
+  function tally_get_menu_options()
+  {
+    var stack = "";
+
+    for(var i = 0; i < tally_menu_options.length; i++)
+    {
+      stack += "<div class=\"" + tally_menu_options[i].domClass + "\">"
+             + "<div class=\"label\">" + tally_menu_options[i].label + "</div>"
+             + "<input ";
+      stack += tally_menu_options[i].type != "checkbox"
+          && tally_menu_options[i].type != "radio" ? "placeholder=\""
+          + tally_menu_options[i].placeholder + "\"" : "";
+      stack += " type=\"" + tally_menu_options[i].type + "\""
+             + " autocomplete=\"off\" autocorrect=\"off\">"
+             + "</div>\n";
+    }
+
+    return stack;
+  }
+
+  // Get export menu items
+  function tally_get_menu_export()
+  {
+    var ret = "";
+
+    for(var i = 0; i < tally_menu_export.length; i++)
+    {
+      ret += "<div class=\"" + tally_menu_export[i].domClass + "\">"
+           + tally_menu_export[i].label + "</div>\n";
+    }
+
+    return ret;
+  }
+
+  // Get options menu item prefill string
+  // @param   string    domClass    DOM class of the menu item to prefill.
+  function tally_menu_prefill_options(domClass)
+  {
+    var ret = "";
+
+    for(var i = 0; i < tally_menu_options.length; i++)
+    {
+      if(tally_menu_options[i].domClass == domClass && ret.length == 0
+          && options[tally_menu_options[i].prefill_propertyName]
+          != defaults[tally_menu_options[i].prefill_propertyName])
+        ret = options[tally_menu_options[i].prefill_propertyName];
+    }
+
+    return ret;
+  }
+
+  // Call options menu item callback
+  // @param   string    domClass    DOM class of the menu item.
+  // @param   ref:var   param       Parameter to pass to the callback function.
+  function tally_menu_callback_options(domClass, param)
+  {
+    for(var i = 0; i < tally_menu_options.length; i++)
+    {
+      if(tally_menu_options[i].domClass == domClass)
+        tally_menu_options[i].callback(param);
+    }
+  }
+
+  // Calls export menu item callback
+  // @param     string      domClass    DOM class of the menu item.
+  // @param     ref:var     param       Parameter to pass down to the callback
+  // function.
+  function tally_menu_callback_export(domClass, param)
+  {
+    for(var i = 0; i < tally_menu_export.length; i++)
+    {
+      if(tally_menu_export[i].domClass == domClass)
+        tally_menu_export[i].callback(param);
+    }
+  }
+
+  // Expose certain tally options
+  window._tally = {
+    tally_enqueue_menu_options: tally_enqueue_menu_options,
+    tally_enqueue_menu_export: tally_enqueue_menu_export
+  };
+
   $(document).ready(function()
   {
     list = $(".app-body .tally-list .list");
@@ -601,7 +730,119 @@
         .trigger("focusout");
 
       tally_modal_toggle();
-    })
+    });
+
+    tally_enqueue_menu_options("List Name", "text",
+        "Tally.Dev by Ghifari160", "name", function(p)
+        {
+          if(p != "")
+          {
+            tally_update_item("com.ghifari160.tally.name", "=" + p);
+
+            if($(".app-body").find("h1.name").length > 0)
+              $(".app-body").find("h1.name").html(p);
+            else
+            {
+              $(".app-body").prepend("<h1 class=\"name\">" + p + "</h1>");
+            }
+
+            options.name = p;
+            document.title = p + " | "
+                + $("meta[name=application-name]").attr("content");
+          }
+          else
+          {
+            tally_update_item("com.ghifari160.tally.name", "-1");
+            $(".app-body").find("h1.name").remove();
+            options.name = "";
+            document.title = $("meta[name=application-name]").attr("content");
+          }
+        }, "name");
+    tally_enqueue_menu_options("Starting Value:", "tel", "1",
+       "startVal", function(p)
+       {
+         // Set the option if the input is not emptu and is an int
+         if(p != "" && !isNaN(p))
+         {
+           tally_update_item("com.ghifari160.tally.startVal", "=" + p);
+           options.startVal = parseInt(p);
+         }
+         else
+         {
+           tally_update_item("com.ghifari160.tally.startVal", "-1");
+           options.startVal = defaults.startVal;
+         }
+       }, "startVal");
+    tally_enqueue_menu_options("com.ghifari160.tally.upDelta:",
+       "tel", "1", "upDelta", function(p)
+       {
+         if(p != "" && !isNaN(p))
+         {
+           tally_update_item("com.ghifari160.tally.upDelta", "=" + p);
+           options.listUpDelta = parseInt(p);
+         }
+         else
+         {
+           tally_update_item("com.ghifari160.tally.upDelta", "-1");
+           options.listUpDelta = defaults.listUpDelta;
+         }
+       }, "listUpDelta");
+    tally_enqueue_menu_options("com.ghifari160.tally.downDelta:",
+       "tel", "1", "downDelta", function(p)
+       {
+         if(p != "" && !isNaN(p))
+         {
+           tally_update_item("com.ghifari160.tally.downDelta", "=" + p);
+           options.listDownDelta = parseInt(p);
+         }
+         else
+         {
+           tally_update_item("com.ghifari160.tally.downDelta", "-1");
+           options.listDownDelta = defaults.listDownDelta;
+         }
+       }, "listDownDelta");
+
+    tally_enqueue_menu_export("Excel", "xlsx", function(p)
+    {
+      xl.generate(tally_get_list_JSON(false), function(blob)
+      {
+        tally_downloadBlob("xlsx", blob);
+      });
+    });
+    tally_enqueue_menu_export("CSV", "csv", function(p)
+    {
+      var ext, blob;
+
+      ext = "csv";
+      blob = new Blob([tally_get_list_csv()],
+        {type: "text/csv;charset=utf-8;"});
+
+      tally_downloadBlob(ext, blob);
+    });
+    tally_enqueue_menu_export("TSV", "tsv", function(p)
+    {
+      var ext, blob;
+
+      ext = "tsv";
+      blob = new Blob([tally_get_list_tsv()],
+          {type: "text/tsv;charset=utf-8;"});
+    });
+    tally_enqueue_menu_export("JSON", "json", function(p)
+    {
+      var ext, blob;
+
+      ext = "json";
+      blob = new Blob([tally_get_list_json()],
+          {type: "application/json;charset=utf-8;"});
+    });
+    tally_enqueue_menu_export("SQL", "sql", function(p)
+    {
+      var ext, blob;
+
+      ext = "tsv";
+      blob = new Blob([tally_get_list_sql()],
+          {type: "application/sql;charset=utf-8;"});
+    });
 
     // UI
     $("body").on("click", ".app-body .tally-list .ui a", function(e)
@@ -617,42 +858,14 @@
       {
         title = "Export";
         bodyEl = "<div class=\"container\">"
-               + "<div class=\"btn xlsx\">Excel</div>"
-               + "<div class=\"btn csv\">CSV</div>"
-               + "<div class=\"btn tsv\">TSV</div>"
-               + "<div class=\"btn json\">JSON</div>"
-               + "<div class=\"btn sql\">SQL</div>"
+               + tally_get_menu_export()
                + "</div>";
       }
       else if($(this).hasClass("options"))
       {
         title = "Options";
         bodyEl = "<div class=\"container\">"
-
-               + "<div class=\"opt name\">"
-               + "<div class=\"label\">List Name:</div>"
-               + "<input placeholder=\"Tally.Dev by Ghifari160\" type=\"text\""
-               + " autocomplete=\"off\" autocorrect=\"off\">"
-               + "</div>"
-
-               + "<div class=\"opt startVal\">"
-               + "<div class=\"label\">Starting Value:</div>"
-               + "<input placeholder=\"1\" type=\"tel\" autocomplete=\"off\" "
-               + "autocorrect=\"off\">"
-               + "</div>"
-
-               + "<div class=\"opt upDelta\">"
-               + "<div class=\"label\">com.ghifari160.tally.upDelta:</div>"
-               + "<input placeholder=\"1\" type=\"tel\" autocomplete=\"off\" "
-               + "autocorrect=\"off\">"
-               + "</div>"
-
-               + "<div class=\"opt downDelta\">"
-               + "<div class=\"label\">com.ghifari160.tally.downDelta:</div>"
-               + "<input placeholder=\"1\" type=\"tel\" autocomplete=\"off\" "
-               + "autocorrect=\"off\">"
-               + "</div>"
-
+               + tally_get_menu_options()
                + "</div>";
       }
 
@@ -661,28 +874,16 @@
       // Prefill the options UI
       if($(this).hasClass("options"))
       {
-        if(options.name != defaults.name)
+        var domClasses = [];
+        $("#modal-dialog .body .container").children().each(function()
         {
-          $("#modal-dialog .body .container .opt.name input")
-            .val(options.name);
-        }
+          domClasses.push($(this).attr("class"));
+        });
 
-        if(options.startVal != defaults.startVal)
+        for(var i = 0; i < domClasses.length; i++)
         {
-          $("#modal-dialog .body .container .opt.startVal input")
-            .val(options.startVal);
-        }
-
-        if(options.listUpDelta != defaults.listUpDelta)
-        {
-          $("#modal-dialog .body .container .opt.upDelta input")
-            .val(options.listUpDelta);
-        }
-
-        if(options.listDownDelta != defaults.listDownDelta)
-        {
-          $("#modal-dialog .body .container .opt.downDelta input")
-            .val(options.listDownDelta);
+          $("#modal-dialog .body .container ." + domClasses[i].replace(" ", ".")
+          + " input").val(tally_menu_prefill_options(domClasses[i]));
         }
       }
 
@@ -692,130 +893,15 @@
     // Handle export UI
     $("body").on("click", "#modal-dialog .body .container .btn", function(e)
     {
-      var blob, ext;
-
-      // CSV export
-      if($(this).hasClass("csv"))
-      {
-        ext = "csv";
-        blob = new Blob([tally_get_list_csv()],
-            {type: "text/csv;charset=utf-8;"});
-      }
-      // TSV export
-      else if($(this).hasClass("tsv"))
-      {
-        ext = "tsv";
-        blob = new Blob([tally_get_list_tsv()],
-            {type: "text/tsv;charset=utf-8;"});
-      }
-      // SQL export
-      else if($(this).hasClass("sql"))
-      {
-        ext = "sql";
-        blob = new Blob([tally_get_list_sql()],
-            {type: "application/sql;charset=utf-8;"});
-      }
-      // JSON export
-      else if($(this).hasClass("json"))
-      {
-        ext = "json";
-        blob = new Blob([tally_get_list_JSON()],
-            {type: "application/json;charset=utf-8;"});
-      }
-      // Excel export
-      else if($(this).hasClass("xlsx"))
-      {
-        xl.generate(tally_get_list_JSON(false), function(blob)
-        {
-          tally_downloadBlob("xlsx", blob);
-        });
-
-        return;
-      }
-
-      tally_downloadBlob(ext, blob);
+      tally_menu_callback_export($(this).attr("class"), "");
     });
 
     // Handle options UI
     $("body").on("focusout", "#modal-dialog .body .container .opt input",
     function(e)
     {
-      // Name configuration
-      if($(this).parent().hasClass("name"))
-      {
-        // Set the name of the list
-        if($(this).val() != "")
-        {
-          tally_update_item("com.ghifari160.tally.name", "=" + $(this).val());
-
-          if($(".app-body").find("h1.name").length > 0)
-            $(".app-body").find("h1.name").html($(this).val());
-          else
-          {
-            $(".app-body").prepend("<h1 class=\"name\">" + $(this).val()
-                + "</h1>");
-          }
-
-          options.name = $(this).val();
-          document.title = $(this).val() + " | "
-              + $("meta[name=application-name]").attr("content");
-        }
-        // Restore the defaults if the input is empty
-        else
-        {
-          tally_update_item("com.ghifari160.tally.name", "-1");
-          $(".app-body h1.name").remove();
-          options.name = "";
-          document.title = $("meta[name=application-name]").attr("content");
-        }
-      }
-      // Starting value configuration
-      else if($(this).parent().hasClass("startVal"))
-      {
-        // Set the option of the input is not empty and is an int
-        if($(this).val() != "" && !isNaN($(this).val()))
-        {
-          tally_update_item("com.ghifari160.tally.startVal", "="
-            + $(this).val());
-          options.startVal = parseInt($(this).val());
-        }
-        // Restore defaults if the input is empty
-        else
-        {
-          tally_update_item("com.ghifari160.tally.startVal", "-1");
-          options.startVal = defaults.startVal;
-        }
-      }
-      // Up Delta configuration
-      else if($(this).parent().hasClass("upDelta"))
-      {
-        if($(this).val() != "" && !isNaN($(this).val()))
-        {
-          tally_update_item("com.ghifari160.tally.upDelta", "="
-            + $(this).val());
-          options.listUpDelta = parseInt($(this).val());
-        }
-        else
-        {
-          tally_update_item("com.ghifari160.tally.upDelta", "-1");
-          options.listUpDelta = defaults.listUpDelta;
-        }
-      }
-      // Down Delta configuration
-      else if($(this).parent().hasClass("downDelta"))
-      {
-        if($(this).val() != "" && !isNaN($(this).val()))
-        {
-          tally_update_item("com.ghifari160.tally.downDelta", "="
-            + $(this).val());
-          options.listDownDelta = parseInt($(this).val());
-        }
-        else
-        {
-          tally_update_item("com.ghifari160.tally.downDelta", "-1");
-          options.listDownDelta = defaults.listDownDelta;
-        }
-      }
+      tally_menu_callback_options($(this).parent().attr("class"),
+          $(this).val());
 
       tally_body_resize();
       tally_update_instanceURI();
