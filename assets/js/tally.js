@@ -651,7 +651,9 @@
   window._tally = {
     tally_enqueue_menu_options: tally_enqueue_menu_options,
     tally_enqueue_menu_export: tally_enqueue_menu_export,
-    tally_update_item: tally_update_item
+    tally_update_item: tally_update_item,
+    tally_get_list_JSON: tally_get_list_JSON,
+    tally_get_list_base64: tally_get_list_base64
   };
 
   $(document).ready(function()
