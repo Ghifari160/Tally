@@ -650,7 +650,8 @@
   // Expose certain tally options
   window._tally = {
     tally_enqueue_menu_options: tally_enqueue_menu_options,
-    tally_enqueue_menu_export: tally_enqueue_menu_export
+    tally_enqueue_menu_export: tally_enqueue_menu_export,
+    tally_update_item: tally_update_item
   };
 
   $(document).ready(function()
