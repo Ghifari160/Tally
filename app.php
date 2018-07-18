@@ -88,6 +88,10 @@ function tally_meta()
 // = BEGIN MODULE CORE-DBOPS =
 // ===========================
 
+// Register core-dbops scripts if the module is enabled
+if(OPT_USE_DATABASE)
+  add_action("enqueue_scripts", "tally_core_dbops_add_scripts");
+
 class CORE_DBOPS
 {
   // @ref:CORE_DBOPS:MODE:ERROR
@@ -334,6 +338,12 @@ class CORE_DBOPS_OPERATION
     // Backwards compatibility
     $this->columns = $columns;
   }
+}
+
+// Registers core-dbops scripts
+function tally_core_dbops_add_scripts()
+{
+  enqueue_script("core-dbops", g16_asset_uri("", "core-dbops.js", "core-dbops"), "0.1");
 }
 
 // Generates unique ID using microtime() as seed and a Mersenne Twister RNG
