@@ -715,7 +715,9 @@
     tally_get_list_base64: tally_get_list_base64,
     tally_register_hook: tally_register_hook,
     tally_register_action: tally_register_action,
-    tally_execute_actions: tally_execute_actions
+    tally_execute_actions: tally_execute_actions,
+    tally_scan_options: tally_scan_options,
+    options: options
   };
 
   $(document).ready(function()
