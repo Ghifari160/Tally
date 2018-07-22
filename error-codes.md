@@ -19,3 +19,12 @@ Blocks `0xC0` to `0xDF` are reserved by the core.
 ## Core Modules
 Modules must update the following table. Modules may not reassign error codes of
 another module. Any conflicts may be resolved by pull request reviewers.
+
+| Code   | Module       | Error Constant                    |
+|--------|--------------|-----------------------------------|
+| `0xE0` | `core-dbops` | `ERROR_CONNECTION`                |
+| `0xE1` | `core-dbops` | `ERROR_SQL`                       |
+| `0xE2` | `core-dbops` | `ERROR_PAYLOAD_MISSING_META`      |
+| `0xE3` | `core-dbops` | `ERROR_PAYLOAD_WRONG_VERSION`     |
+| `0xE4` | `core-dbops` | `ERROR_PAYLOAD_LIST_NOT_INTEGRAL` |
+| `0xE5` | `core-dbops` | `ERROR_CORE_DBOPS`                |

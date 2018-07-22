@@ -179,9 +179,9 @@ class CORE_DBOPS_SUCCESS extends SUCCESS
 class CORE_DBOPS_ERROR extends ERROR
 {
   // @ref:CORE_DBOPS_ERROR:ERROR:CONNECTION
-  const ERROR_CONNECTION = 0xD0;
+  const ERROR_CONNECTION = 0xE0;
   // @ref:CORE_DBOPS_ERROR:ERROR:SQL
-  const ERROR_SQL = 0xD1;
+  const ERROR_SQL = 0xE1;
 
   public $core_dbops;
 

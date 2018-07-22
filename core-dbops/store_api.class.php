@@ -11,13 +11,13 @@ class Store_API extends API
   // @ref Store_API:BACKEND_VER
   const BACKEND_VER = "0.1";
   // @ref Store_API:ERROR:PAYLOAD:MISSING_META
-  const ERROR_PAYLOAD_MISSING_META = 0x01;
+  const ERROR_PAYLOAD_MISSING_META = 0xE2;
   // @ref Store_API:ERROR:PAYLOAD:WRONG_VERSION
-  const ERROR_PAYLOAD_WRONG_VERSION = 0x02;
+  const ERROR_PAYLOAD_WRONG_VERSION = 0xE3;
   // @ref Store_API:ERROR:PAYLOAD:LIST:NOT_INTEGRAL
-  const ERROR_PAYLOAD_LIST_NOT_INTEGRAL = 0x03;
+  const ERROR_PAYLOAD_LIST_NOT_INTEGRAL = 0xE4;
   // @ref Store_API:ERROR:CORE_DBOPS
-  const ERROR_CORE_DBOPS = 0x04;
+  const ERROR_CORE_DBOPS = 0xE5;
 
   // @param   string    $request_method     HTTP method of the request.
   // @param   string    $request_backend    Backend to handle the request.
