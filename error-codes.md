@@ -12,7 +12,7 @@ Blocks `0x01` to `0xBF` are reserved by the engine.
 ## Core
 Blocks `0xC0` to `0xDF` are reserved by the core.
 
-| Code             |                           |
+| Code             | Error Constant            |
 |------------------|---------------------------|
 | `0xC0` to `0xDF` | _Reserved for future use_ |
 
