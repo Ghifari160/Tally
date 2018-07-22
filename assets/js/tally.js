@@ -788,7 +788,8 @@
       tally_update_item($(this).find(".identifier").html(), "-"
           + options.listDownDelta);
 
-      tally_update_instanceURI();
+      // tally_update_instanceURI();
+      tally_execute_actions("list_update");
     });
 
     // Modal Handler
