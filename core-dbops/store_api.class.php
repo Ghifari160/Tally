@@ -6,8 +6,6 @@ require_once "api.class.php";
 
 class Store_API extends API
 {
-  // TODO: error codes organization
-
   // @ref Store_API:BACKEND_VER
   const BACKEND_VER = "0.1";
   // @ref Store_API:ERROR:PAYLOAD:MISSING_META
@@ -34,7 +32,7 @@ class Store_API extends API
     $resp = new stdClass;
 
     // Decode JSON request input
-    $obj = json_decode($params[0]);
+    $obj = json_decode($this->request_input);
 
     // Verify payload contains metadata
     $list_meta_missing = array();
@@ -54,7 +52,7 @@ class Store_API extends API
         && $list_meta_missing[0] != "tally"
         && $list_meta_missing[0] != "tally.version"))
     {
-      $list_meta_missing_str = "\'".implode("\',\'", $list_meta_missing)."\'";
+      $list_meta_missing_str = "'".implode("', '", $list_meta_missing)."'";
       return array($list_meta_missing_str,
           Store_API::ERROR_PAYLOAD_MISSING_META);
     }
