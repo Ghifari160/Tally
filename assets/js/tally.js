@@ -647,13 +647,75 @@
     }
   }
 
+  var tally_validHooks = [],
+      tally_hookActions = [];
+
+  // Registers a hook
+  // @param     string    hook    Hook to register.
+  function tally_register_hook(hook)
+  {
+    // Register if hook does not exist
+    if(!tally_verify_hook(hook))
+      tally_validHooks.push(hook);
+  }
+
+  // Verifies validity of hook
+  // @param     string    hook    Hook to check for validty.
+  // @return    bool              Validity of the hook.
+  function tally_verify_hook(hook)
+  {
+    var hookExists = false;
+    for(var i = 0; i < tally_validHooks.length; i++)
+    {
+      if(tally_validHooks[i] == hook)
+        hookExists = true;
+    }
+    return hookExists;
+  }
+
+  // Registers a hook action
+  // @param     string      hook      Hook to register the action for.
+  // @param     ref:func    action    Function to call when the hook is executed.
+  // @return    bool                  Registration status.
+  function tally_register_action(hook, action)
+  {
+    // Register action if hook is valid
+    if(tally_verify_hook(hook))
+    {
+      var actionObject = {};
+      actionObject.hook = hook;
+      actionObject.action = action;
+      tally_hookActions.push(actionObject);
+      return true;
+    }
+
+    return false;
+  }
+
+  // Execute all actions from hook.
+  // @param   string    hook    Hook to execute.
+  function tally_execute_actions(hook)
+  {
+    if(tally_verify_hook(hook))
+    {
+      for(var i = 0; i < tally_hookActions.length; i++)
+      {
+        if(tally_hookActions[i].hook == hook)
+          tally_hookActions[i].action();
+      }
+    }
+  }
+
   // Expose certain tally options
   window._tally = {
     tally_enqueue_menu_options: tally_enqueue_menu_options,
     tally_enqueue_menu_export: tally_enqueue_menu_export,
     tally_update_item: tally_update_item,
     tally_get_list_JSON: tally_get_list_JSON,
-    tally_get_list_base64: tally_get_list_base64
+    tally_get_list_base64: tally_get_list_base64,
+    tally_register_hook: tally_register_hook,
+    tally_register_action: tally_register_action,
+    tally_execute_actions: tally_execute_actions
   };
 
   $(document).ready(function()
@@ -662,6 +724,9 @@
 
     defaults.name = $("meta[name=application-name]").attr("content");
     $.extend(options, defaults);
+
+    tally_register_hook("list_update");
+    tally_register_action("list_update", tally_update_instanceURI);
 
     // Instance info
     var current_path = window.location.pathname,
@@ -711,7 +776,8 @@
 
         $(".app-body .tally-input .item-input").val("");
 
-        tally_update_instanceURI();
+        // tally_update_instanceURI();
+        tally_execute_actions("list_update");
       }
     });
 
