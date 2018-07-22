@@ -55,7 +55,6 @@ class ERROR
 {
   const MODULE_NOT_LOADED = 0x01;
   const CALL_TO_UNLOADED_MODULE = 0x02;
-  const MODULE_DBOPS_SQL_ERROR = 0xD0;
 
   public $error_code;
   public $error_message;
